@@ -6,6 +6,7 @@ import torch.nn.functional as F
 
 import datetime
 import numpy as np
+#只是调用了这个文件，还需调用文件下的这个构造函数
 
 
 def torch_dcg_at_k(batch_rankings, cutoff=None, device='cpu'):
@@ -817,7 +818,9 @@ class NeuralRanker():
         presort = kwargs['presort']
         num_queries = 0
         epoch_loss = torch.tensor([0.0], device=self.device)
+
         for batch_ids, batch_q_doc_vectors, batch_std_labels in train_data: # batch_size, [batch_size, num_docs, num_features], [batch_size, num_docs]
+
             num_queries += len(batch_ids)
             if self.gpu: batch_q_doc_vectors, batch_std_labels = batch_q_doc_vectors.to(self.device), batch_std_labels.to(self.device)
 
@@ -836,6 +839,8 @@ class NeuralRanker():
         @param kwargs: optional arguments
         @return:
         '''
+
+
         batch_preds = self.forward(batch_q_doc_vectors)
         return self.custom_loss_function(batch_preds, batch_std_labels, **kwargs)
 
@@ -1149,10 +1154,18 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
 
     return l2r_cv_avg_scores
 
+
+
+
+
+
 if __name__ == '__main__':
     # testing
     data_id = 'MQ2008_Super'
     dir_data = 'D:/Data/MQ2008/'
     model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
     # print(model_id)
-    evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+    a=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+    b=a.min()
+    print(b)
+
