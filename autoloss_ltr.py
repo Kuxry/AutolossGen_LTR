@@ -6,6 +6,7 @@ import torch.nn.functional as F
 
 import datetime
 import numpy as np
+import BaseRunner
 #只是调用了这个文件，还需调用文件下的这个构造函数
 
 
@@ -1156,6 +1157,15 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
 
 
 
+def DataProcessor(data_id=None, dir_data=None):
+    fold_num = 5
+    for fold_k in range(1, fold_num + 1):  # evaluation over k-fold data
+
+        train_data, test_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+
+    return  train_data, test_data
+
+
 
 
 
@@ -1165,7 +1175,11 @@ if __name__ == '__main__':
     dir_data = 'D:/Data/MQ2008/'
     model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
     # print(model_id)
-    a=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
-    b=a.min()
-    print(b)
+    #evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+    #data_processor = DataProcessor(data_id=None, dir_data=None)
+
+    runner=BaseRunner.baserunner()
+    runner.train(search_loss=False,data_id=data_id, dir_data=dir_data, model_id=model_id)
+
+
 
