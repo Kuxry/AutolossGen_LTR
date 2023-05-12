@@ -86,7 +86,7 @@ class LossFormula(nn.Module):
         return parser
 
     def __init__(self,
-                 model_path,
+                 #model_path,
                  num_layers=12,
                  num_branches=6,
                  out_filters=24,
@@ -101,7 +101,7 @@ class LossFormula(nn.Module):
         self.out_filters = out_filters
         self.keep_prob = keep_prob
         self.fixed_arc = fixed_arc
-        self.model_path = model_path
+        #self.model_path = model_path
 
         self.layers = nn.ModuleList([])
 

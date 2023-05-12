@@ -33,7 +33,7 @@ class Controller(nn.Module):
     '''
 
     def __init__(self,
-                 model_path,
+                 #model_path,
                  search_for="macro",
                  search_whole_channels=True,
                  num_layers=12,
@@ -69,7 +69,7 @@ class Controller(nn.Module):
         self.entropy_weight = entropy_weight
         self.bl_dec = bl_dec
         self.num_aggregate = num_aggregate
-        self.model_path = model_path
+        #self.model_path = model_path
         self.sample_branch_id = sample_branch_id
         self.sample_skip_id = sample_skip_id
 

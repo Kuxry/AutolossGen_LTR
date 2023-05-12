@@ -8,6 +8,8 @@ import datetime
 import numpy as np
 import BaseRunner
 #只是调用了这个文件，还需调用文件下的这个构造函数
+from controller import Controller
+from loss_formula import LossFormula
 
 
 def torch_dcg_at_k(batch_rankings, cutoff=None, device='cpu'):
@@ -1093,7 +1095,11 @@ def load_multiple_data(data_id, dir_data, fold_k, batch_size=100):
     test_letor_sampler = LETORSampler(data_source=_test_data, rough_batch_size=batch_size)
     test_data = torch.utils.data.DataLoader(_test_data, batch_sampler=test_letor_sampler, num_workers=0)
 
-    return train_data, test_data
+    _vali_data = LTRDataset(data_id=data_id, file=file_vali, split_type=SPLIT_TYPE.Test, batch_size=batch_size)
+    vali_letor_sampler = LETORSampler(data_source=_vali_data, rough_batch_size=batch_size)
+    vali_data = torch.utils.data.DataLoader(_test_data, batch_sampler=vali_letor_sampler, num_workers=0)
+
+    return train_data, test_data, vali_data
 
 def metric_results_to_string(list_scores=None, list_cutoffs=None, split_str=', ', metric='nDCG'):
     """
@@ -1118,9 +1124,10 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     :return:
     """
     fold_num = 5
-    cutoffs = [1, 3, 5, 10]
-    epochs = 2
+    cutoffs = [1,3,5,7,9,10]
+    epochs = 1
     ranker = globals()[model_id]()
+
 
     time_begin = datetime.datetime.now()       # timing
     l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
@@ -1128,7 +1135,7 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     for fold_k in range(1, fold_num + 1):   # evaluation over k-fold data
         ranker.init()           # initialize or reset with the same random initialization
 
-        train_data, test_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+        train_data, test_data,vali_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
         #test_data = None
 
         for epoch_k in range(1, epochs + 1):
@@ -1153,7 +1160,9 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     eval_prefix = str(fold_num) + '-fold average scores:'
     print(model_id, eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
 
-    return l2r_cv_avg_scores
+    mean_l2r_cv_avg_scores=np.mean(l2r_cv_avg_scores)
+    print(mean_l2r_cv_avg_scores)
+    return mean_l2r_cv_avg_scores
 
 
 
@@ -1161,9 +1170,9 @@ def DataProcessor(data_id=None, dir_data=None):
     fold_num = 5
     for fold_k in range(1, fold_num + 1):  # evaluation over k-fold data
 
-        train_data, test_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+        train_data, test_data, vali_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
 
-    return  train_data, test_data
+    return  train_data, test_data,vali_data
 
 
 
@@ -1176,10 +1185,17 @@ if __name__ == '__main__':
     model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
     # print(model_id)
     #evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
-    #data_processor = DataProcessor(data_id=None, dir_data=None)
+    data_processor = DataProcessor(data_id=data_id, dir_data=dir_data)
 
-    runner=BaseRunner.baserunner()
-    runner.train(search_loss=False,data_id=data_id, dir_data=dir_data, model_id=model_id)
+    controller = Controller()
+    controller = controller.cuda()
+
+    loss_formula = LossFormula()
+    loss_formula = loss_formula.cuda()
+
+    runner=BaseRunner.baserunner(loss_formula=loss_formula,controller=controller)
+    runner.train(search_loss=True,data_id=data_id, dir_data=dir_data, model_id=model_id)
+
 
 
 

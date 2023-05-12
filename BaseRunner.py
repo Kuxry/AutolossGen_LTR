@@ -105,19 +105,18 @@ class baserunner(NeuralRanker):
     #     return optimizer
 
     def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None):
-        model=controller
-        train, test = DataProcessor(data_id=data_id, dir_data=dir_data)
+        model=NeuralRanker()
+        train, test,vali = DataProcessor(data_id=data_id, dir_data=dir_data)
         epochs=1
         min_reward = torch.tensor(-1.0).cuda()
         try:
             for epoch_k in range(1, epochs + 1):
-                self.loss_formula.eval()
-                self.controller.zero_grad()
+                # self.loss_formula.eval()
+                # self.controller.zero_grad()
 
-                if  search_loss:
-                    start=evaluation()
-                    start_ndcg10=start.min()
-                    baseline = torch.tensor(start_ndcg10).cuda()
+                if search_loss:
+                    start=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+                    baseline = torch.tensor(start).cuda()
                     cur_model= copy.deepcopy(model)
                     grad_dict = dict()
                     test_pred = torch.rand(20).cuda() * 0.8 + 0.1  # change range here
@@ -125,7 +124,7 @@ class baserunner(NeuralRanker):
                     test_pred.requires_grad = True
                     max_reward = min_reward.clone().detach()
                     best_arc = None
-                    for i in 100:
+                    for i in range(100):
                         while True:
                             reward = None
                             self.controller()  # perform forward pass to generate a new architecture
@@ -166,7 +165,18 @@ class baserunner(NeuralRanker):
                                 baseline -= (1 - self.args.controller_bl_dec) * (baseline - reward)
                             baseline = baseline.detach()
 
-
+                            ctrl_loss = -1 * self.controller.sample_log_prob * (reward - baseline)
+                            ctrl_loss /= self.controller.num_aggregate
+                            if (i + 1) % self.controller.num_aggregate == 0:
+                                ctrl_loss.backward()
+                                grad_norm = torch.nn.utils.clip_grad_norm_(self.controller.parameters(),
+                                                                           self.args.child_grad_bound)
+                                self.controller_optimizer.step()
+                                self.controller.zero_grad()
+                            else:
+                                ctrl_loss.backward(retain_graph=True)
+                            break
+                    self.controller.eval()
 
 
                 else:
@@ -183,5 +193,6 @@ class baserunner(NeuralRanker):
                 self.loss_formula.save_model()
 
 
-        self.controller.load_model()
-        self.loss_formula.load_model()
+        # self.controller.load_model()
+        # self.loss_formula.load_model()
+
