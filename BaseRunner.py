@@ -18,7 +18,7 @@ import controller,loss_formula
 from autoloss_ltr import NeuralRanker, load_multiple_data, metric_results_to_string, evaluation, DataProcessor
 
 
-class baserunner(NeuralRanker):
+class baserunner():
     @staticmethod
     def parse_runner_args(parser):
         parser.add_argument('--load', type=int, default=0,
@@ -103,20 +103,55 @@ class baserunner(NeuralRanker):
     #         optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate, weight_decay=self.l2_weight)
     #     # optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate)
     #     return optimizer
+    # def fit(self, model, data, data_processor, epoch=-1, loss_fun=None, sample_arc=None,
+    #         regularizer=True):  # fit the results for an input set
+    #
+    #     if model.optimizer is None:
+    #         model.optimizer = self._build_optimizer(model)
+    #     batches = data_processor.prepare_batches(data, self.batch_size, train=True)
+    #     batches = self.batches_add_control(batches, train=True)
+    #     batch_size = self.batch_size if data_processor.rank == 0 else self.batch_size * 2
+    #     model.train()  # tensorflow,nnmodel中,train() model.
+    #     accumulate_size = 0
+    #     to_show = batches if self.args.search_loss else tqdm(batches, leave=False, desc='Epoch %5d' % (epoch + 1),
+    #                                                          ncols=100, mininterval=1)
+    #     for batch in to_show:
+    #         accumulate_size += len(batch['Y'])
+    #         model.optimizer.zero_grad()
+    #         output_dict = model(batch)
+    #         loss = output_dict['loss'] + model.l2() * self.l2_weight
+    #         if loss_fun is not None and sample_arc is not None:
+    #             loss = loss_fun(output_dict['prediction'], batch['Y'], sample_arc)
+    #             if regularizer:
+    #                 loss += model.l2() * self.l2_weight
+    #         loss.backward()
+    #         torch.nn.utils.clip_grad_value_(model.parameters(), 50)
+    #         if accumulate_size >= batch_size or batch is batches[-1]:
+    #             model.optimizer.step()
+    #             accumulate_size = 0
+    #     model.eval()
+    #     return output_dict
+
+
 
     def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None):
         model=NeuralRanker()
         train, test,vali = DataProcessor(data_id=data_id, dir_data=dir_data)
         epochs=1
         min_reward = torch.tensor(-1.0).cuda()
+
+
+
+        train_with_optim = False
+
         try:
-            for epoch_k in range(1, epochs + 1):
-                # self.loss_formula.eval()
-                # self.controller.zero_grad()
+            for epoch in range(1, epochs + 1):
+                self.loss_formula.eval()
+                self.controller.zero_grad()
 
                 if search_loss:
-                    start=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
-                    baseline = torch.tensor(start).cuda()
+                    start_auc=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+                    baseline = torch.tensor(start_auc).cuda()
                     cur_model= copy.deepcopy(model)
                     grad_dict = dict()
                     test_pred = torch.rand(20).cuda() * 0.8 + 0.1  # change range here
@@ -124,7 +159,7 @@ class baserunner(NeuralRanker):
                     test_pred.requires_grad = True
                     max_reward = min_reward.clone().detach()
                     best_arc = None
-                    for i in range(100):
+                    for i in range(10):
                         while True:
                             reward = None
                             self.controller()  # perform forward pass to generate a new architecture
@@ -136,30 +171,29 @@ class baserunner(NeuralRanker):
                                 test_loss.backward()
                             except RuntimeError:
                                 pass
-                            if test_pred.grad is None or torch.norm(test_pred.grad,
-                                                                    float('inf')) < self.args.lower_bound_zero_gradient:
+                            if test_pred.grad is None or torch.norm(test_pred.grad,float('inf')) < self.args.lower_bound_zero_gradient:
                                 reward = min_reward.clone().detach()
                             if reward is None:
                                 for key, value in grad_dict.items():
                                     if torch.norm(test_pred.grad - key, float('inf')) < self.args.lower_bound_zero_gradient:
                                         reward = value.clone().detach()
                                         break
-                            # if reward is None:
-                            #     model.zero_grad()
-                            #     for j in range(self.args.search_train_epoch):
-                            #         last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
-                            #                               loss_fun=self.loss_formula, sample_arc=sample_arc,
-                            #                               regularizer=False)
-                            #     reward = torch.tensor(self.evaluate(model, validation_data, data_processor)[0]).cuda()
-                            #     grad_dict[test_pred.grad.clone().detach()] = reward.clone().detach()
-                            #     model = copy.deepcopy(cur_model)
+                            if reward is None:
+                                model.zero_grad()
+                                # for j in range(self.args.search_train_epoch):
+                                #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
+                                #                           loss_fun=self.loss_formula, sample_arc=sample_arc,
+                                #                           regularizer=False)
+                                reward = torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                                grad_dict[test_pred.grad.clone().detach()] = reward.clone().detach()
+                                model = copy.deepcopy(cur_model)
                             if reward < baseline - self.args.skip_lim:
                                 reward = min_reward.clone().detach()
                                 reward += self.args.controller_entropy_weight * self.controller.sample_entropy
                             else:
                                 if reward > max_reward:
                                     max_reward = reward.clone().detach()
-                                    if self.args.train_with_optim:
+                                    if train_with_optim:
                                         best_arc = copy.deepcopy(sample_arc)
                                 reward += self.args.controller_entropy_weight * self.controller.sample_entropy
                                 baseline -= (1 - self.args.controller_bl_dec) * (baseline - reward)
@@ -177,6 +211,63 @@ class baserunner(NeuralRanker):
                                 ctrl_loss.backward(retain_graph=True)
                             break
                     self.controller.eval()
+
+                    logging.info(
+                        'Best auc during controller train: %.3f; Starting auc: %.3f' % (max_reward.item(), start_auc))
+                    last_search_cnt = 0
+                    if self.args.train_with_optim and best_arc is not None and max_reward > start_auc - self.args.rej_lim:
+                        sample_arc = copy.deepcopy(best_arc)
+                        # for j in range(self.args.step_train_epoch):
+                        #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
+                        #                           loss_fun=self.loss_formula, sample_arc=sample_arc)
+                        new_auc = torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                        print('Optimal: ',
+                              self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
+                    else:
+                        grad_dict = dict()
+                        self.controller.zero_grad()
+                        while True:
+                            with torch.no_grad():
+                                self.controller(sampling=True)
+                                last_search_cnt += 1
+                            sample_arc = self.controller.sample_arc
+                            if test_pred.grad is not None:
+                                test_pred.grad.data.zero_()
+                            test_loss = self.loss_formula(test_pred, test_label, sample_arc, small_epsilon=True)
+                            try:
+                                test_loss.backward()
+                            except RuntimeError:
+                                pass
+                            if test_pred.grad is None or torch.norm(test_pred.grad,
+                                                                    float('inf')) < self.args.lower_bound_zero_gradient:
+                                continue
+                            dup_flag = False
+                            for key in grad_dict.keys():
+                                if torch.norm(test_pred.grad - key, float('inf')) < self.args.lower_bound_zero_gradient:
+                                    dup_flag = True
+                                    break
+                            if dup_flag:
+                                continue
+                            print(self.loss_formula.log_formula(sample_arc=sample_arc,
+                                                                id=self.loss_formula.num_layers - 1))
+                            grad_dict[test_pred.grad.clone().detach()] = True
+                            model = copy.deepcopy(cur_model)
+                            model.zero_grad()
+                            # for j in range(self.args.step_train_epoch):
+                            #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
+                            #                           loss_fun=self.loss_formula, sample_arc=sample_arc)
+                            new_auc =torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                            if new_auc > start_auc - self.args.rej_lim:
+                                break
+                            print('Epoch %d: Reject!' % (epoch + 1))
+
+                    last_search_cnt = max(last_search_cnt // 10,self.controller.num_aggregate * self.args.controller_train_steps)
+                    if last_search_cnt % self.controller.num_aggregate != 0:
+                        last_search_cnt = (last_search_cnt // self.controller.num_aggregate + 1) * self.controller.num_aggregate
+                    logging.info(self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
+                    self.controller.train()
+
+
 
 
                 else:

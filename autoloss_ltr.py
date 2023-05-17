@@ -1,4 +1,5 @@
 
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,10 +7,6 @@ import torch.nn.functional as F
 
 import datetime
 import numpy as np
-import BaseRunner
-#只是调用了这个文件，还需调用文件下的这个构造函数
-from controller import Controller
-from loss_formula import LossFormula
 
 
 def torch_dcg_at_k(batch_rankings, cutoff=None, device='cpu'):
@@ -779,12 +776,13 @@ def load_data(data_id, file, split_type, batch_size):
     ltr_data = torch.utils.data.DataLoader(_ltr_data, batch_sampler=letor_sampler, num_workers=0)
     return ltr_data
 
-class NeuralRanker():
+class NeuralRanker(nn.Module):
     """
     NeuralRanker is a class that represents a general learning-to-rank model.
     Different learning-to-rank models inherit NeuralRanker, but differ in custom_loss_function, which corresponds to a particular loss function.
     """
     def __init__(self, id='AbsRanker', gpu=False, device=None):
+        super(NeuralRanker, self).__init__()#add
         self.id = id
         self.gpu, self.device = gpu, device
         self.init()
@@ -1177,24 +1175,6 @@ def DataProcessor(data_id=None, dir_data=None):
 
 
 
-
-if __name__ == '__main__':
-    # testing
-    data_id = 'MQ2008_Super'
-    dir_data = 'D:/Data/MQ2008/'
-    model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
-    # print(model_id)
-    #evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
-    data_processor = DataProcessor(data_id=data_id, dir_data=dir_data)
-
-    controller = Controller()
-    controller = controller.cuda()
-
-    loss_formula = LossFormula()
-    loss_formula = loss_formula.cuda()
-
-    runner=BaseRunner.baserunner(loss_formula=loss_formula,controller=controller)
-    runner.train(search_loss=True,data_id=data_id, dir_data=dir_data, model_id=model_id)
 
 
 
