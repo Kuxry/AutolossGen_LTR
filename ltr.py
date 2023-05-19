@@ -781,11 +781,15 @@ class NeuralRanker(nn.Module):
     NeuralRanker is a class that represents a general learning-to-rank model.
     Different learning-to-rank models inherit NeuralRanker, but differ in custom_loss_function, which corresponds to a particular loss function.
     """
-    def __init__(self, id='AbsRanker', gpu=False, device=None):
+    def __init__(self, id='AbsRanker', gpu=True, device="cuda:0"):
         super(NeuralRanker, self).__init__()#add
         self.id = id
         self.gpu, self.device = gpu, device
         self.init()
+
+        # if torch.cuda.device_count() > 0:
+        #     # model = model.to('cuda:0')
+        #     self = self.cuda()
 
     def init(self):
         # inner scoring function by using a hard-coded one as an example
@@ -794,7 +798,11 @@ class NeuralRanker(nn.Module):
             nn.Linear(128, 64), nn.GELU(),
             nn.Linear(64, 32),  nn.GELU(),
             nn.Linear(32, 1),  nn.GELU())
+        if self.device !="cpu":
+            self.sf=self.sf.cuda()
         self.optimizer = optim.Adam(self.sf.parameters(), lr = 0.0001, weight_decay = 0.0001)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
     def eval_mode(self):
         '''
@@ -853,6 +861,7 @@ class NeuralRanker(nn.Module):
         @param kwargs:
         @return:
         '''
+
         pass
 
     def forward(self, batch_q_doc_vectors):
@@ -1093,9 +1102,9 @@ def load_multiple_data(data_id, dir_data, fold_k, batch_size=100):
     test_letor_sampler = LETORSampler(data_source=_test_data, rough_batch_size=batch_size)
     test_data = torch.utils.data.DataLoader(_test_data, batch_sampler=test_letor_sampler, num_workers=0)
 
-    _vali_data = LTRDataset(data_id=data_id, file=file_vali, split_type=SPLIT_TYPE.Test, batch_size=batch_size)
+    _vali_data = LTRDataset(data_id=data_id, file=file_vali, split_type=SPLIT_TYPE.Validation, batch_size=batch_size)
     vali_letor_sampler = LETORSampler(data_source=_vali_data, rough_batch_size=batch_size)
-    vali_data = torch.utils.data.DataLoader(_test_data, batch_sampler=vali_letor_sampler, num_workers=0)
+    vali_data = torch.utils.data.DataLoader(_vali_data, batch_sampler=vali_letor_sampler, num_workers=0)
 
     return train_data, test_data, vali_data
 
@@ -1123,11 +1132,11 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     """
     fold_num = 5
     cutoffs = [1,3,5,7,9,10]
-    epochs = 1
+    epochs = 10
     ranker = globals()[model_id]()
 
 
-    time_begin = datetime.datetime.now()       # timing
+    # time_begin = datetime.datetime.now()       # timing
     l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
 
     for fold_k in range(1, fold_num + 1):   # evaluation over k-fold data
@@ -1150,9 +1159,9 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
 
         l2r_cv_avg_scores = np.add(l2r_cv_avg_scores, fold_ndcg_ks) # sum for later cv-performance
 
-    time_end = datetime.datetime.now()  # overall timing
-    elapsed_time_str = str(time_end - time_begin)
-    print('Elapsed time:\t', elapsed_time_str + "\n\n")
+    # time_end = datetime.datetime.now()  # overall timing
+    # elapsed_time_str = str(time_end - time_begin)
+    # print('Elapsed time:\t', elapsed_time_str + "\n\n")
 
     l2r_cv_avg_scores = np.divide(l2r_cv_avg_scores, fold_num)
     eval_prefix = str(fold_num) + '-fold average scores:'
@@ -1164,6 +1173,8 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
 
 
 
+
+
 def DataProcessor(data_id=None, dir_data=None):
     fold_num = 5
     for fold_k in range(1, fold_num + 1):  # evaluation over k-fold data
@@ -1171,7 +1182,6 @@ def DataProcessor(data_id=None, dir_data=None):
         train_data, test_data, vali_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
 
     return  train_data, test_data,vali_data
-
 
 
 

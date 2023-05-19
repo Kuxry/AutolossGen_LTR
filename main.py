@@ -9,7 +9,7 @@ import numpy as np
 
 import BaseRunner
 #只是调用了这个文件，还需调用文件下的这个构造函数
-from autoloss_ltr import DataProcessor
+
 from controller import Controller
 from loss_formula import LossFormula
 
@@ -21,7 +21,7 @@ def main():
 
     parser.add_argument('--log_file', type=str, default='../log/log_0.txt', help='Logging file path')
     parser.add_argument('--result_file', type=str, default='../result/result.npy', help='Result file path')
-    parser.add_argument('--random_seed', type=int, default=40, help='Random seed of numpy and pytorch')
+    parser.add_argument('--random_seed', type=int, default=42, help='Random seed of numpy and pytorch')
     parser.add_argument('--model_name', type=str, default='BiasedMF', help='Choose model to run.')
 
     parser.add_argument('--child_num_layers', type=int, default=12)
@@ -55,7 +55,7 @@ def main():
     model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
     # print(model_id)
     # evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
-    data_processor = DataProcessor(data_id=data_id, dir_data=dir_data)
+
 
     controller = Controller()
     controller = controller.cuda()

@@ -15,7 +15,8 @@ import datetime
 from sklearn.metrics import roc_auc_score, precision_recall_curve, roc_curve, accuracy_score
 
 import controller,loss_formula
-from autoloss_ltr import NeuralRanker, load_multiple_data, metric_results_to_string, evaluation, DataProcessor
+from ltr import NeuralRanker, load_multiple_data, metric_results_to_string, evaluation, \
+    DataProcessor, RankMSE
 
 
 class baserunner():
@@ -51,16 +52,14 @@ class baserunner():
         parser.add_argument('--rej_lim', type=float, default=1e-5, help='bad training reject limit')
         parser.add_argument('--lower_bound_zero_gradient', type=float, default=1e-4,
                             help='bound to check zero gradient')
-        parser.add_argument('--search_train_epoch', type=int, default=1,
-                            help='epoch num for training when searching loss')
+        parser.add_argument('--search_train_epoch', type=int, default=1,help='epoch num for training when searching loss')
         parser.add_argument('--step_train_epoch', type=int, default=1, help='epoch num for training each step')
 
         return parser
 
     def __init__(self, optimizer='GD', learning_rate=0.01, epoch=100, batch_size=128, eval_batch_size=128 * 128,
                  dropout=0.2, l2=1e-5, metrics='AUC,RMSE', check_epoch=10, early_stop=1, controller=None,
-                 loss_formula=None,
-                 controller_optimizer=None, args=None):
+                 loss_formula=None,controller_optimizer=None, args=None, gpu=True, device="cuda:0"):
         self.optimizer_name = optimizer
         self.learning_rate = learning_rate
         self.epoch = epoch
@@ -82,6 +81,9 @@ class baserunner():
         self.controller_optimizer = controller_optimizer
         self.args = args
         self.print_prediction = {}
+        self.gpu, self.device = gpu, device
+
+
 
     # def _build_optimizer(self, model):
     #     optimizer_name = self.optimizer_name.lower()
@@ -132,25 +134,59 @@ class baserunner():
     #     model.eval()
     #     return output_dict
 
+    def fit(self,model,data,loss_fun=None,sample_arc=None, regularizer=True):
+        epoch = 10
+        num_queries = 0
+        model.train_mode()
+        for step in range(epoch):
+            for batch_ids, batch_q_doc_vectors, batch_std_labels in data:  # batch_size, [batch_size, num_docs, num_features], [batch_size, num_docs]
+
+                num_queries += len(batch_ids)
+                if self.gpu: batch_q_doc_vectors, batch_std_labels = batch_q_doc_vectors.to(self.device), batch_std_labels.to(self.device)
+                batch_preds = model(batch_q_doc_vectors)
+                model.optimizer.zero_grad()
+                # if loss_fun is None:
+                #     for epoch_k in range(1, epoch + 1):
+                #         torch_fold_k_epoch_k_loss = model.train(train_data=data, epoch_k=epoch_k, presort=True)
+
+                if loss_fun is not None and sample_arc is not None:
+                    loss = loss_fun(batch_preds, batch_std_labels, sample_arc)
+                    if regularizer:
+                        loss += model.l2() * self.l2_weight
+                loss.backward()
+                torch.nn.utils.clip_grad_value_(model.parameters(), 50)
+                model.optimizer.step()
+        model.eval_mode()
+
+
+
+
+
+
+
+
+
 
 
     def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None):
-        model=NeuralRanker()
-        train, test,vali = DataProcessor(data_id=data_id, dir_data=dir_data)
+
+        model=RankMSE()
+        model.init()  # initialize or reset with the same random initialization
+        # if torch.cuda.device_count() > 0:
+        #     # model = model.to('cuda:0')
+        #     model = model.cuda()
+
+        train_data, test_data,validation_data = DataProcessor(data_id, dir_data)
         epochs=1
         min_reward = torch.tensor(-1.0).cuda()
-
-
-
         train_with_optim = False
-
         try:
             for epoch in range(1, epochs + 1):
                 self.loss_formula.eval()
                 self.controller.zero_grad()
 
                 if search_loss:
-                    start_auc=evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+                    start_auc=pre_evaluate(model,test_data)
                     baseline = torch.tensor(start_auc).cuda()
                     cur_model= copy.deepcopy(model)
                     grad_dict = dict()
@@ -180,11 +216,9 @@ class baserunner():
                                         break
                             if reward is None:
                                 model.zero_grad()
-                                # for j in range(self.args.search_train_epoch):
-                                #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
-                                #                           loss_fun=self.loss_formula, sample_arc=sample_arc,
-                                #                           regularizer=False)
-                                reward = torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                                for j in range(self.args.search_train_epoch):
+                                    last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
+                                reward = torch.tensor(pre_evaluate(model,test_data)).cuda()
                                 grad_dict[test_pred.grad.clone().detach()] = reward.clone().detach()
                                 model = copy.deepcopy(cur_model)
                             if reward < baseline - self.args.skip_lim:
@@ -217,10 +251,9 @@ class baserunner():
                     last_search_cnt = 0
                     if self.args.train_with_optim and best_arc is not None and max_reward > start_auc - self.args.rej_lim:
                         sample_arc = copy.deepcopy(best_arc)
-                        # for j in range(self.args.step_train_epoch):
-                        #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
-                        #                           loss_fun=self.loss_formula, sample_arc=sample_arc)
-                        new_auc = torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                        for j in range(self.args.search_train_epoch):
+                            last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
+                        new_auc = torch.tensor(pre_evaluate(model,test_data)).cuda()
                         print('Optimal: ',
                               self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
                     else:
@@ -238,8 +271,7 @@ class baserunner():
                                 test_loss.backward()
                             except RuntimeError:
                                 pass
-                            if test_pred.grad is None or torch.norm(test_pred.grad,
-                                                                    float('inf')) < self.args.lower_bound_zero_gradient:
+                            if test_pred.grad is None or torch.norm(test_pred.grad,float('inf')) < self.args.lower_bound_zero_gradient:
                                 continue
                             dup_flag = False
                             for key in grad_dict.keys():
@@ -253,10 +285,9 @@ class baserunner():
                             grad_dict[test_pred.grad.clone().detach()] = True
                             model = copy.deepcopy(cur_model)
                             model.zero_grad()
-                            # for j in range(self.args.step_train_epoch):
-                            #     last_batch = self.fit(model, epoch_train_data, data_processor, epoch=epoch,
-                            #                           loss_fun=self.loss_formula, sample_arc=sample_arc)
-                            new_auc =torch.tensor(evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)).cuda()
+                            for j in range(self.args.search_train_epoch):
+                                last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
+                            new_auc =torch.tensor(pre_evaluate(model,test_data)).cuda()
                             if new_auc > start_auc - self.args.rej_lim:
                                 break
                             print('Epoch %d: Reject!' % (epoch + 1))
@@ -273,6 +304,7 @@ class baserunner():
                 else:
                     # for epoch_k in range(1, epochs + 1):
                     #     torch_fold_k_epoch_k_loss = model.train(train_data=train_data, epoch_k=epoch_k, presort=True)
+
                     evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
 
         except KeyboardInterrupt:
@@ -287,3 +319,33 @@ class baserunner():
         # self.controller.load_model()
         # self.loss_formula.load_model()
 
+def pre_evaluate(model,data):
+    model_id = 'RankMSE'
+    ranker = model
+    fold_num = 5
+    cutoffs = [1,3,5,7,9,10]
+    epochs = 1
+
+    l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
+
+    for fold_k in range(1, fold_num + 1):
+        #ranker.init()           # initialize or reset with the same random initialization
+        #test_data = None
+
+        # for epoch_k in range(1, epochs + 1):
+        #     torch_fold_k_epoch_k_loss = ranker.train(train_data=data, epoch_k=epoch_k, presort=True)
+        torch_fold_ndcg_ks = ranker.ndcg_at_ks(test_data=data, ks=cutoffs, device='cpu', presort=True)
+        fold_ndcg_ks = torch_fold_ndcg_ks.data.numpy()
+        l2r_cv_avg_scores = np.add(l2r_cv_avg_scores, fold_ndcg_ks) # sum for later cv-performance
+
+    # time_end = datetime.datetime.now()  # overall timing
+    # elapsed_time_str = str(time_end - time_begin)
+    # print('Elapsed time:\t', elapsed_time_str + "\n\n")
+
+    l2r_cv_avg_scores = np.divide(l2r_cv_avg_scores, fold_num)
+    eval_prefix = str(fold_num) + '-fold average scores:'
+    print(model_id, eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
+
+    mean_l2r_cv_avg_scores=np.mean(l2r_cv_avg_scores)
+    print(mean_l2r_cv_avg_scores)
+    return mean_l2r_cv_avg_scores
