@@ -781,11 +781,13 @@ class NeuralRanker(nn.Module):
     NeuralRanker is a class that represents a general learning-to-rank model.
     Different learning-to-rank models inherit NeuralRanker, but differ in custom_loss_function, which corresponds to a particular loss function.
     """
-    def __init__(self, id='AbsRanker', gpu=True, device="cuda:0"):
+    def __init__(self, model_path="./model/neural_ranker.pt", id='AbsRanker', gpu=True, device="cuda:0"):
         super(NeuralRanker, self).__init__()#add
         self.id = id
+        self.model_path = model_path
         self.gpu, self.device = gpu, device
         self.init()
+
 
         # if torch.cuda.device_count() > 0:
         #     # model = model.to('cuda:0')
@@ -802,6 +804,26 @@ class NeuralRanker(nn.Module):
             self.sf=self.sf.cuda()
         self.optimizer = optim.Adam(self.sf.parameters(), lr = 0.0001, weight_decay = 0.0001)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    def save_model(self, model_path=None):
+        """
+        save model
+        """
+        if model_path is None:
+            model_path = self.model_path
+        dir_path = os.path.dirname(model_path)
+        if not os.path.exists(dir_path):
+            os.mkdir(dir_path)
+        torch.save(self.state_dict(), model_path)
+
+    def load_model(self, model_path=None):
+        """
+        load model
+        """
+        if model_path is None:
+            model_path = self.model_path
+        self.load_state_dict(torch.load(model_path))
+        self.eval()
 
 
     def eval_mode(self):
@@ -949,6 +971,11 @@ class NeuralRanker(nn.Module):
             num_queries += len(batch_ids)
 
         avg_ndcg_at_ks = sum_ndcg_at_ks / num_queries
+
+        #if first is False:
+        #    print(batch_predict_rankings)
+        #    print(batch_ideal_rankings)
+
         return avg_ndcg_at_ks
 
 def rankMSE_loss_function(relevance_preds=None, std_labels=None):

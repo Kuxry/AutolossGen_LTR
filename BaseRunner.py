@@ -5,7 +5,7 @@ import logging
 from time import time
 
 import torch.nn.functional as F
-# from utils import utils, global_p
+from utils import utils, global_p
 from tqdm import tqdm
 import numpy as np
 import os
@@ -49,7 +49,7 @@ class baserunner():
         parser.add_argument('--skip_rate', type=float, default=1.005, help='bad loss skip rate')
         parser.add_argument('--rej_rate', type=float, default=1.005, help='bad training reject rate')
         parser.add_argument('--skip_lim', type=float, default=1e-5, help='bad loss skip limit')
-        parser.add_argument('--rej_lim', type=float, default=1e-5, help='bad training reject limit')
+        parser.add_argument('--rej_lim', type=float, default=1e-8, help='bad training reject limit')
         parser.add_argument('--lower_bound_zero_gradient', type=float, default=1e-4,
                             help='bound to check zero gradient')
         parser.add_argument('--search_train_epoch', type=int, default=1,help='epoch num for training when searching loss')
@@ -83,110 +83,95 @@ class baserunner():
         self.print_prediction = {}
         self.gpu, self.device = gpu, device
 
+    def _check_time(self, start=False):
+        if self.time is None or start:
+            self.time = [time()] * 2
+            return self.time[0]
+        tmp_time = self.time[1]
+        self.time[1] = time()
+        return self.time[1] - tmp_time
 
-
-    # def _build_optimizer(self, model):
-    #     optimizer_name = self.optimizer_name.lower()
-    #     if optimizer_name == 'gd':
-    #         logging.info("Optimizer: GD")
-    #         optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate, weight_decay=self.l2_weight)
-    #     # optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate)
-    #     elif optimizer_name == 'adagrad':
-    #         logging.info("Optimizer: Adagrad")
-    #         optimizer = torch.optim.Adagrad(model.parameters(), lr=self.learning_rate, weight_decay=self.l2_weight)
-    #     # optimizer = torch.optim.Adagrad(model.parameters(), lr=self.learning_rate)
-    #     elif optimizer_name == 'adam':
-    #         logging.info("Optimizer: Adam")
-    #         optimizer = torch.optim.Adam(model.parameters(), lr=self.learning_rate, weight_decay=self.l2_weight)
-    #     # optimizer = torch.optim.Adam(model.parameters(), lr=self.learning_rate)
-    #     else:
-    #         logging.error("Unknown Optimizer: " + self.optimizer_name)
-    #         assert self.optimizer_name in ['GD', 'Adagrad', 'Adam']
-    #         optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate, weight_decay=self.l2_weight)
-    #     # optimizer = torch.optim.SGD(model.parameters(), lr=self.learning_rate)
-    #     return optimizer
-    # def fit(self, model, data, data_processor, epoch=-1, loss_fun=None, sample_arc=None,
-    #         regularizer=True):  # fit the results for an input set
-    #
-    #     if model.optimizer is None:
-    #         model.optimizer = self._build_optimizer(model)
-    #     batches = data_processor.prepare_batches(data, self.batch_size, train=True)
-    #     batches = self.batches_add_control(batches, train=True)
-    #     batch_size = self.batch_size if data_processor.rank == 0 else self.batch_size * 2
-    #     model.train()  # tensorflow,nnmodel中,train() model.
-    #     accumulate_size = 0
-    #     to_show = batches if self.args.search_loss else tqdm(batches, leave=False, desc='Epoch %5d' % (epoch + 1),
-    #                                                          ncols=100, mininterval=1)
-    #     for batch in to_show:
-    #         accumulate_size += len(batch['Y'])
-    #         model.optimizer.zero_grad()
-    #         output_dict = model(batch)
-    #         loss = output_dict['loss'] + model.l2() * self.l2_weight
-    #         if loss_fun is not None and sample_arc is not None:
-    #             loss = loss_fun(output_dict['prediction'], batch['Y'], sample_arc)
-    #             if regularizer:
-    #                 loss += model.l2() * self.l2_weight
-    #         loss.backward()
-    #         torch.nn.utils.clip_grad_value_(model.parameters(), 50)
-    #         if accumulate_size >= batch_size or batch is batches[-1]:
-    #             model.optimizer.step()
-    #             accumulate_size = 0
-    #     model.eval()
-    #     return output_dict
+    def eva_termination(self, model):
+        """
+        检查是否终止训练，基于验证集
+        :param model: 模型
+        :return: 是否终止训练
+        """
+        metric = self.metrics[0]
+        valid = self.valid_results
+        # 如果已经训练超过100轮，且评价指标越小越好，且评价已经连续十轮非减
+        if len(valid) > 100 and metric in utils.LOWER_METRIC_LIST and utils.strictly_increasing(valid[-10:]):
+            return True
+        # 如果已经训练超过100轮，且评价指标越大越好，且评价已经连续十轮非增
+        elif len(valid) > 100 and metric not in utils.LOWER_METRIC_LIST and utils.strictly_decreasing(valid[-10:]):
+            return True
+        # 训练好结果离当前已经100轮以上了
+        elif len(valid) - valid.index(utils.best_result(metric, valid)) > 100:
+            return True
+        return False
 
     def fit(self,model,data,loss_fun=None,sample_arc=None, regularizer=True):
-        epoch = 10
+        epoch = 1
         num_queries = 0
         model.train_mode()
+        #sum_loss=[]
         for step in range(epoch):
+            #avg_loss=0
             for batch_ids, batch_q_doc_vectors, batch_std_labels in data:  # batch_size, [batch_size, num_docs, num_features], [batch_size, num_docs]
-
                 num_queries += len(batch_ids)
                 if self.gpu: batch_q_doc_vectors, batch_std_labels = batch_q_doc_vectors.to(self.device), batch_std_labels.to(self.device)
                 batch_preds = model(batch_q_doc_vectors)
                 model.optimizer.zero_grad()
-                # if loss_fun is None:
-                #     for epoch_k in range(1, epoch + 1):
-                #         torch_fold_k_epoch_k_loss = model.train(train_data=data, epoch_k=epoch_k, presort=True)
-
                 if loss_fun is not None and sample_arc is not None:
                     loss = loss_fun(batch_preds, batch_std_labels, sample_arc)
                     if regularizer:
                         loss += model.l2() * self.l2_weight
+                #avg_loss+=loss
                 loss.backward()
                 torch.nn.utils.clip_grad_value_(model.parameters(), 50)
                 model.optimizer.step()
+            #avg_loss=avg_loss/100
+            #sum_loss.append(avg_loss)
         model.eval_mode()
 
 
 
 
+    def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None,skip_eval=0):
 
-
-
-
-
-
-
-    def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None):
-
-        model=RankMSE()
+        model=NeuralRanker()
         model.init()  # initialize or reset with the same random initialization
-        # if torch.cuda.device_count() > 0:
-        #     # model = model.to('cuda:0')
-        #     model = model.cuda()
+        #几轮
+        epochs=3
 
+        # 获得训练、验证、测试数据，epoch=-1不shuffle
         train_data, test_data,validation_data = DataProcessor(data_id, dir_data)
-        epochs=1
+        self._check_time(start=True)  # 记录初始时间
+
+        # 训练之前的模型效果
+        init_train = pre_evaluate(model,train_data) \
+            if train_data is not None else [-1.0] * len(self.metrics)
+        init_valid = pre_evaluate(model,validation_data) \
+            if validation_data is not None else [-1.0] * len(self.metrics)
+        init_test = pre_evaluate(model,test_data) \
+            if test_data is not None else [-1.0] * len(self.metrics)
+
+        # 打印当前时间
+        logging.info(datetime.datetime.now())
+
+        logging.info("Init: \t train= %s validation= %s test= %s [%.1f s] " % (utils.format_metric(init_train), utils.format_metric(init_valid), utils.format_metric(init_test),
+            self._check_time()) + ','.join(self.metrics))
+
         min_reward = torch.tensor(-1.0).cuda()
         train_with_optim = False
+
+        last_search_cnt = self.controller.num_aggregate * self.args.controller_train_steps
         try:
             for epoch in range(1, epochs + 1):
                 self.loss_formula.eval()
                 self.controller.zero_grad()
-
                 if search_loss:
-                    start_auc=pre_evaluate(model,test_data)
+                    start_auc=pre_evaluate(model,test_data)#
                     baseline = torch.tensor(start_auc).cuda()
                     cur_model= copy.deepcopy(model)
                     grad_dict = dict()
@@ -195,7 +180,8 @@ class baserunner():
                     test_pred.requires_grad = True
                     max_reward = min_reward.clone().detach()
                     best_arc = None
-                    for i in range(10):
+
+                    for i in tqdm(range(last_search_cnt), leave=False, desc='Epoch %5d' % (epoch + 1), ncols=100,mininterval=1):
                         while True:
                             reward = None
                             self.controller()  # perform forward pass to generate a new architecture
@@ -218,7 +204,7 @@ class baserunner():
                                 model.zero_grad()
                                 for j in range(self.args.search_train_epoch):
                                     last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                                reward = torch.tensor(pre_evaluate(model,test_data)).cuda()
+                                reward = torch.tensor(pre_evaluate(model,test_data,True)).cuda()
                                 grad_dict[test_pred.grad.clone().detach()] = reward.clone().detach()
                                 model = copy.deepcopy(cur_model)
                             if reward < baseline - self.args.skip_lim:
@@ -240,22 +226,21 @@ class baserunner():
                                 grad_norm = torch.nn.utils.clip_grad_norm_(self.controller.parameters(),
                                                                            self.args.child_grad_bound)
                                 self.controller_optimizer.step()
+                                #print("step")
                                 self.controller.zero_grad()
                             else:
                                 ctrl_loss.backward(retain_graph=True)
                             break
                     self.controller.eval()
 
-                    logging.info(
-                        'Best auc during controller train: %.3f; Starting auc: %.3f' % (max_reward.item(), start_auc))
+                    logging.info('Best auc during controller train: %.3f; Starting auc: %.3f' % (max_reward.item(), start_auc))
                     last_search_cnt = 0
                     if self.args.train_with_optim and best_arc is not None and max_reward > start_auc - self.args.rej_lim:
                         sample_arc = copy.deepcopy(best_arc)
                         for j in range(self.args.search_train_epoch):
                             last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                        new_auc = torch.tensor(pre_evaluate(model,test_data)).cuda()
-                        print('Optimal: ',
-                              self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
+                        new_auc = torch.tensor(pre_evaluate(model,test_data,True)).cuda()
+                        print('Optimal: ', self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
                     else:
                         grad_dict = dict()
                         self.controller.zero_grad()
@@ -280,15 +265,14 @@ class baserunner():
                                     break
                             if dup_flag:
                                 continue
-                            print(self.loss_formula.log_formula(sample_arc=sample_arc,
-                                                                id=self.loss_formula.num_layers - 1))
+                            print(self.loss_formula.log_formula(sample_arc=sample_arc,id=self.loss_formula.num_layers - 1))
                             grad_dict[test_pred.grad.clone().detach()] = True
                             model = copy.deepcopy(cur_model)
                             model.zero_grad()
                             for j in range(self.args.search_train_epoch):
                                 last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                            new_auc =torch.tensor(pre_evaluate(model,test_data)).cuda()
-                            if new_auc > start_auc - self.args.rej_lim:
+                            new_auc =torch.tensor(pre_evaluate(model,test_data,True)).cuda()
+                            if new_auc > start_auc + self.args.rej_lim:#
                                 break
                             print('Epoch %d: Reject!' % (epoch + 1))
 
@@ -297,15 +281,48 @@ class baserunner():
                         last_search_cnt = (last_search_cnt // self.controller.num_aggregate + 1) * self.controller.num_aggregate
                     logging.info(self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
                     self.controller.train()
-
-
-
-
                 else:
-                    # for epoch_k in range(1, epochs + 1):
-                    #     torch_fold_k_epoch_k_loss = model.train(train_data=train_data, epoch_k=epoch_k, presort=True)
+                    last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
+                training_time = self._check_time()
 
-                    evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
+                if epoch >= skip_eval:
+                    metrics = self.metrics[0:1]
+                    train_result = pre_evaluate(model, train_data) \
+                        if train_data is not None else [-1.0] * len(self.metrics)
+                    valid_result = pre_evaluate(model, validation_data) \
+                        if validation_data is not None else [-1.0] * len(self.metrics)
+                    test_result = pre_evaluate(model, test_data) \
+                        if test_data is not None else [-1.0] * len(self.metrics)
+                    testing_time = self._check_time()
+
+
+                    self.train_results.append(train_result)
+                    self.valid_results.append(valid_result)
+                    self.test_results.append(test_result)
+
+                    # 输出当前模型效果
+                    logging.info("Epoch %5d [%.1f s]\t train= %s validation= %s test= %s [%.1f s] "
+                                 % (epoch + 1, training_time, utils.format_metric(train_result),
+                                    utils.format_metric(valid_result), utils.format_metric(test_result),
+                                    testing_time) + ','.join(self.metrics))
+
+                    if not self.args.search_loss:
+                        print("Epoch %5d [%.1f s]\t train= %s validation= %s test= %s [%.1f s] "
+                              % (epoch + 1, training_time, utils.format_metric(train_result),
+                                 utils.format_metric(valid_result), utils.format_metric(test_result),
+                                 testing_time) + ','.join(self.metrics))
+                    # 如果当前效果是最优的，保存模型，基于验证集
+                    if utils.best_result(self.metrics[0], self.valid_results) == self.valid_results[-1]:
+                        model.save_model()
+                        self.controller.save_model()
+                        self.loss_formula.save_model()
+                    # 检查是否终止训练，基于验证集
+                    if self.args.search_loss == False and self.eva_termination(model) and self.early_stop == 1:
+                        logging.info("Early stop at %d based on validation result." % (epoch + 1))
+                        break
+                if epoch < skip_eval:
+                    logging.info("Epoch %5d [%.1f s]" % (epoch + 1, training_time))
+
 
         except KeyboardInterrupt:
             print("Early stop manually")
@@ -315,17 +332,35 @@ class baserunner():
                 self.controller.save_model()
                 self.loss_formula.save_model()
 
+        # Find the best validation result across iterations
+        best_valid_score = utils.best_result(self.metrics[0], self.valid_results)
+        best_epoch = self.valid_results.index(best_valid_score)
+        logging.info("Best Iter(validation)= %5d\t train= %s valid= %s test= %s [%.1f s] "
+                     % (best_epoch + 1,
+                        utils.format_metric(self.train_results[best_epoch]),
+                        utils.format_metric(self.valid_results[best_epoch]),
+                        utils.format_metric(self.test_results[best_epoch]),
+                        self.time[1] - self.time[0]) + ','.join(self.metrics))
+        best_test_score = utils.best_result(self.metrics[0], self.test_results)
+        best_epoch = self.test_results.index(best_test_score)
+        logging.info("Best Iter(test)= %5d\t train= %s valid= %s test= %s [%.1f s] "
+                     % (best_epoch + 1,
+                        utils.format_metric(self.train_results[best_epoch]),
+                        utils.format_metric(self.valid_results[best_epoch]),
+                        utils.format_metric(self.test_results[best_epoch]),
+                        self.time[1] - self.time[0]) + ','.join(self.metrics))
+        model.load_model()
+        self.controller.load_model()
+        self.loss_formula.load_model()
 
-        # self.controller.load_model()
-        # self.loss_formula.load_model()
 
-def pre_evaluate(model,data):
-    model_id = 'RankMSE'
+
+
+def pre_evaluate(model,data,reward_check=False):
+
     ranker = model
     fold_num = 5
-    cutoffs = [1,3,5,7,9,10]
-    epochs = 1
-
+    cutoffs = [1,3,5]
     l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
 
     for fold_k in range(1, fold_num + 1):
@@ -338,14 +373,17 @@ def pre_evaluate(model,data):
         fold_ndcg_ks = torch_fold_ndcg_ks.data.numpy()
         l2r_cv_avg_scores = np.add(l2r_cv_avg_scores, fold_ndcg_ks) # sum for later cv-performance
 
+
     # time_end = datetime.datetime.now()  # overall timing
     # elapsed_time_str = str(time_end - time_begin)
     # print('Elapsed time:\t', elapsed_time_str + "\n\n")
 
     l2r_cv_avg_scores = np.divide(l2r_cv_avg_scores, fold_num)
     eval_prefix = str(fold_num) + '-fold average scores:'
-    print(model_id, eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
+    print(eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
 
-    mean_l2r_cv_avg_scores=np.mean(l2r_cv_avg_scores)
-    print(mean_l2r_cv_avg_scores)
-    return mean_l2r_cv_avg_scores
+    ndcg5=l2r_cv_avg_scores[2]
+    if reward_check is True:
+        print("reward_check")
+    print(ndcg5)
+    return ndcg5
