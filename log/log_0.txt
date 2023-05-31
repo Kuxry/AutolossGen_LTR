@@ -322,3 +322,123 @@ INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_fil
 INFO:root:2023-05-29 23:17:29.949370
 INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
 INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-08, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 50, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-29 23:22:46.266383
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + (pred) ^ 2)) ^ 2
+INFO:root:Epoch     2 [268.1 s]	 train= 0.380050 validation= 0.423164 test= 0.372181 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.372
+INFO:root:(label + (((pred * 1)) ^ 2) ^ 2)
+INFO:root:Epoch     3 [142.9 s]	 train= 0.466021 validation= 0.504107 test= 0.476852 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.477
+INFO:root:((pred) ^ 2) ^ 2
+INFO:root:Epoch     4 [147.4 s]	 train= 0.498126 validation= 0.516106 test= 0.519994 [0.6 s] auc
+INFO:root:Best Iter(validation)=     3	 train= 0.498126 valid= 0.516106 test= 0.519994 [561.0 s] auc
+INFO:root:Best Iter(test)=     3	 train= 0.498126 valid= 0.516106 test= 0.519994 [561.0 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 50, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-29 23:34:42.124569
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + (pred) ^ 2)) ^ 2
+INFO:root:Epoch     2 [267.9 s]	 train= 0.380050 validation= 0.423164 test= 0.372181 [0.6 s] auc
+INFO:root:Best Iter(validation)=     1	 train= 0.380050 valid= 0.423164 test= 0.372181 [269.2 s] auc
+INFO:root:Best Iter(test)=     1	 train= 0.380050 valid= 0.423164 test= 0.372181 [269.2 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 50, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-29 23:40:11.197393
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + (pred) ^ 2)) ^ 2
+INFO:root:Epoch     2 [274.3 s]	 train= 0.380050 validation= 0.423164 test= 0.372181 [0.6 s] auc
+INFO:root:Best Iter(validation)=     1	 train= 0.380050 valid= 0.423164 test= 0.372181 [275.6 s] auc
+INFO:root:Best Iter(test)=     1	 train= 0.380050 valid= 0.423164 test= 0.372181 [275.6 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 100, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-29 23:46:32.078348
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + min((pred) ^ 2 , (label * 1)))) ^ 2
+INFO:root:Epoch     2 [493.6 s]	 train= 0.366107 validation= 0.397372 test= 0.358020 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.358
+INFO:root:((pred) ^ 2) ^ 2
+INFO:root:Epoch     3 [301.9 s]	 train= 0.429441 validation= 0.463618 test= 0.435933 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.436
+INFO:root:(label * (1 + max(label , (pred * 1))))
+INFO:root:Epoch     4 [314.5 s]	 train= 0.443715 validation= 0.475106 test= 0.456503 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.457
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 100, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-30 11:42:57.651437
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + min((pred) ^ 2 , (label * 1)))) ^ 2
+INFO:root:Epoch     2 [478.4 s]	 train= 0.366107 validation= 0.397372 test= 0.358020 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.358
+INFO:root:((pred) ^ 2) ^ 2
+INFO:root:Epoch     3 [261.6 s]	 train= 0.429441 validation= 0.463618 test= 0.435933 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.436
+INFO:root:(label * (1 + max(label , (pred * 1))))
+INFO:root:Epoch     4 [304.8 s]	 train= 0.443715 validation= 0.475106 test= 0.456503 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.457
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 40, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 100, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-30 14:22:41.699722
+INFO:root:Init: 	 train= 0.349165 validation= 0.402612 test= 0.355156 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.355
+INFO:root:(((pred) ^ 2 + min((pred) ^ 2 , (label * 1)))) ^ 2
+INFO:root:Epoch     2 [478.1 s]	 train= 0.366107 validation= 0.397372 test= 0.358020 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.358
+INFO:root:((pred) ^ 2) ^ 2
+INFO:root:Epoch     3 [297.2 s]	 train= 0.429441 validation= 0.463618 test= 0.435933 [0.6 s] auc
+INFO:root:Best Iter(validation)=     2	 train= 0.429441 valid= 0.463618 test= 0.435933 [777.2 s] auc
+INFO:root:Best Iter(test)=     2	 train= 0.429441 valid= 0.463618 test= 0.435933 [777.2 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 42, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 100, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 100, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-30 15:25:43.440733
+INFO:root:Init: 	 train= 0.473797 validation= 0.551889 test= 0.516488 [0.7 s] auc
+INFO:root:Best auc during controller train: 0.521; Starting auc: 0.516
+INFO:root:min(max(pred , label) , min((1 * max(pred , label)) , max(pred , label)))
+INFO:root:Epoch     2 [299.0 s]	 train= 0.480539 validation= 0.556011 test= 0.520950 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.521
+INFO:root:(- (max((label + 1) , min(label , (label + 1)))) + max(pred , (pred * max((label + 1) , min(label , (label + 1))))))
+INFO:root:Epoch     3 [297.0 s]	 train= 0.479720 validation= 0.555897 test= 0.523428 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.523
+INFO:root:pred
+INFO:root:Epoch     4 [294.5 s]	 train= 0.474790 validation= 0.553000 test= 0.523656 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.524
+INFO:root:min(pred , label)
+INFO:root:Epoch     5 [291.6 s]	 train= 0.472093 validation= 0.545809 test= 0.534510 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.535
+INFO:root:max(1 , ((Log (label) + (pred) ^ 2) + max((pred) ^ 2 , (Log (label) + (pred) ^ 2))))
+INFO:root:Epoch     6 [292.8 s]	 train= 0.572155 validation= 0.597848 test= 0.599439 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.599
+INFO:root:(((label * 1) + (pred) ^ 2) * ((1) ^ 2) ^ 2)
+INFO:root:Epoch     7 [294.5 s]	 train= 0.561956 validation= 0.602240 test= 0.602857 [0.6 s] auc
+INFO:root:Best Iter(validation)=     6	 train= 0.561956 valid= 0.602240 test= 0.602857 [1773.8 s] auc
+INFO:root:Best Iter(test)=     6	 train= 0.561956 valid= 0.602240 test= 0.602857 [1773.8 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 42, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 8, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 50, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_0.txt', 'result_file': '../result/result.npy', 'random_seed': 42, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': './model/Formula.txt', 'child_num_layers': 12, 'child_num_branches': 8, 'child_out_filters': 36, 'sample_branch_id': False, 'sample_skip_id': False, 'search_loss': False, 'train_with_optim': False, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 8, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 20, 'controller_train_steps': 50, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:2023-05-30 16:35:39.740418
+INFO:root:Init: 	 train= 0.473797 validation= 0.551889 test= 0.516488 [0.7 s] auc
+INFO:root:Best auc during controller train: 0.521; Starting auc: 0.516
+INFO:root:min((pred) ^ 2 , max(Log (label) , label))
+INFO:root:Epoch     1 [148.6 s]	 train= 0.575340 validation= 0.598702 test= 0.597179 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:((pred) ^ 2 + Log ((max(pred , 1) + Log (max(pred , 1)))))
+INFO:root:Epoch     2 [144.9 s]	 train= 0.550532 validation= 0.586121 test= 0.599785 [0.7 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.600
+INFO:root:max(1 , ((Log (label) + (pred) ^ 2) + max((pred) ^ 2 , (Log (label) + (pred) ^ 2))))
+INFO:root:Epoch     3 [128.8 s]	 train= 0.551349 validation= 0.591517 test= 0.603032 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.603
+INFO:root:((pred) ^ 2 * min((1) ^ 2 , max((pred) ^ 2 , Log (1))))
+INFO:root:Epoch     4 [137.1 s]	 train= 0.551170 validation= 0.606323 test= 0.605028 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.605
+INFO:root:((pred) ^ 2 * (pred + (label) ^ 2))
+INFO:root:Epoch     5 [206.7 s]	 train= 0.573250 validation= 0.610673 test= 0.608121 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.608
+INFO:root:max((pred) ^ 2 , Log ((1) ^ 2))
+INFO:root:Epoch     6 [141.5 s]	 train= 0.555135 validation= 0.595201 test= 0.608211 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.608
+INFO:root:(label * ((label + (min(pred , label)) ^ 2) * (label * (pred) ^ 2)))
+INFO:root:Epoch     7 [1071.2 s]	 train= 0.556981 validation= 0.601389 test= 0.609948 [0.6 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.610
+INFO:root:(pred) ^ 2
+INFO:root:Epoch     8 [189.8 s]	 train= 0.556554 validation= 0.598868 test= 0.611102 [0.6 s] auc
+INFO:root:Best Iter(validation)=     5	 train= 0.573250 valid= 0.610673 test= 0.608121 [2174.3 s] auc
+INFO:root:Best Iter(test)=     8	 train= 0.556554 valid= 0.598868 test= 0.611102 [2174.3 s] auc

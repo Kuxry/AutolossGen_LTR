@@ -24,7 +24,7 @@ class baserunner():
     def parse_runner_args(parser):
         parser.add_argument('--load', type=int, default=0,
                             help='Whether load model and continue to train')
-        parser.add_argument('--epoch', type=int, default=100,
+        parser.add_argument('--epoch', type=int, default=8,
                             help='Number of epochs.')
         parser.add_argument('--check_epoch', type=int, default=1,
                             help='Check every epochs.')
@@ -49,7 +49,7 @@ class baserunner():
         parser.add_argument('--skip_rate', type=float, default=1.005, help='bad loss skip rate')
         parser.add_argument('--rej_rate', type=float, default=1.005, help='bad training reject rate')
         parser.add_argument('--skip_lim', type=float, default=1e-5, help='bad loss skip limit')
-        parser.add_argument('--rej_lim', type=float, default=1e-8, help='bad training reject limit')
+        parser.add_argument('--rej_lim', type=float, default=1e-5, help='bad training reject limit')
         parser.add_argument('--lower_bound_zero_gradient', type=float, default=1e-4,
                             help='bound to check zero gradient')
         parser.add_argument('--search_train_epoch', type=int, default=1,help='epoch num for training when searching loss')
@@ -137,12 +137,12 @@ class baserunner():
 
 
 
-    def train(self, search_loss=False,data_id=None, dir_data=None, model_id=None,skip_eval=0):
+    def train(self, search_loss=False,model_id=None,data_id=None, dir_data=None,skip_eval=0):
 
         model=NeuralRanker()
         model.init()  # initialize or reset with the same random initialization
         #几轮
-        epochs=3
+
 
         # 获得训练、验证、测试数据，epoch=-1不shuffle
         train_data, test_data,validation_data = DataProcessor(data_id, dir_data)
@@ -167,7 +167,7 @@ class baserunner():
 
         last_search_cnt = self.controller.num_aggregate * self.args.controller_train_steps
         try:
-            for epoch in range(1, epochs + 1):
+            for epoch in range(self.epoch):
                 self.loss_formula.eval()
                 self.controller.zero_grad()
                 if search_loss:
@@ -204,7 +204,7 @@ class baserunner():
                                 model.zero_grad()
                                 for j in range(self.args.search_train_epoch):
                                     last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                                reward = torch.tensor(pre_evaluate(model,test_data,True)).cuda()
+                                reward = torch.tensor(pre_evaluate(model,test_data,True,True)).cuda()
                                 grad_dict[test_pred.grad.clone().detach()] = reward.clone().detach()
                                 model = copy.deepcopy(cur_model)
                             if reward < baseline - self.args.skip_lim:
@@ -239,7 +239,7 @@ class baserunner():
                         sample_arc = copy.deepcopy(best_arc)
                         for j in range(self.args.search_train_epoch):
                             last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                        new_auc = torch.tensor(pre_evaluate(model,test_data,True)).cuda()
+                        new_auc = torch.tensor(pre_evaluate(model,test_data,True,True)).cuda()
                         print('Optimal: ', self.loss_formula.log_formula(sample_arc=sample_arc, id=self.loss_formula.num_layers - 1))
                     else:
                         grad_dict = dict()
@@ -271,8 +271,8 @@ class baserunner():
                             model.zero_grad()
                             for j in range(self.args.search_train_epoch):
                                 last_batch = self.fit(model,train_data,loss_fun=self.loss_formula, sample_arc=sample_arc, regularizer=False)
-                            new_auc =torch.tensor(pre_evaluate(model,test_data,True)).cuda()
-                            if new_auc > start_auc + self.args.rej_lim:#
+                            new_auc =torch.tensor(pre_evaluate(model,test_data,True,True)).cuda()
+                            if new_auc > start_auc - self.args.rej_lim:#
                                 break
                             print('Epoch %d: Reject!' % (epoch + 1))
 
@@ -356,7 +356,7 @@ class baserunner():
 
 
 
-def pre_evaluate(model,data,reward_check=False):
+def pre_evaluate(model,data,reward_check=False,result_check=False):
 
     ranker = model
     fold_num = 5
@@ -364,26 +364,18 @@ def pre_evaluate(model,data,reward_check=False):
     l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
 
     for fold_k in range(1, fold_num + 1):
-        #ranker.init()           # initialize or reset with the same random initialization
-        #test_data = None
-
-        # for epoch_k in range(1, epochs + 1):
-        #     torch_fold_k_epoch_k_loss = ranker.train(train_data=data, epoch_k=epoch_k, presort=True)
         torch_fold_ndcg_ks = ranker.ndcg_at_ks(test_data=data, ks=cutoffs, device='cpu', presort=True)
         fold_ndcg_ks = torch_fold_ndcg_ks.data.numpy()
         l2r_cv_avg_scores = np.add(l2r_cv_avg_scores, fold_ndcg_ks) # sum for later cv-performance
 
-
-    # time_end = datetime.datetime.now()  # overall timing
-    # elapsed_time_str = str(time_end - time_begin)
-    # print('Elapsed time:\t', elapsed_time_str + "\n\n")
-
     l2r_cv_avg_scores = np.divide(l2r_cv_avg_scores, fold_num)
     eval_prefix = str(fold_num) + '-fold average scores:'
-    print(eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
+    #print(eval_prefix, metric_results_to_string(list_scores=l2r_cv_avg_scores, list_cutoffs=cutoffs))  # print either cv or average performance
 
     ndcg5=l2r_cv_avg_scores[2]
     if reward_check is True:
         print("reward_check")
-    print(ndcg5)
+    if result_check is True:
+        print(ndcg5)
+
     return ndcg5

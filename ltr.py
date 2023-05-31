@@ -823,7 +823,7 @@ class NeuralRanker(nn.Module):
         if model_path is None:
             model_path = self.model_path
         self.load_state_dict(torch.load(model_path))
-        self.eval()
+        self.eval_mode()
 
 
     def eval_mode(self):

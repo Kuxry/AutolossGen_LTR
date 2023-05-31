@@ -24,7 +24,7 @@ def main():
     parser.add_argument('--verbose', type=int, default=logging.INFO, help='Logging Level, 0, 10, ..., 50')
     parser.add_argument('--log_file', type=str, default='./log/log_0.txt', help='Logging file path')
     parser.add_argument('--result_file', type=str, default='../result/result.npy', help='Result file path')
-    parser.add_argument('--random_seed', type=int, default=40, help='Random seed of numpy and pytorch')
+    parser.add_argument('--random_seed', type=int, default=42, help='Random seed of numpy and pytorch')
     parser.add_argument('--model_name', type=str, default='BiasedMF', help='Choose model to run.')
     # parser.add_argument('--model_path', type=str, help='Model save path.',
     #                     default=os.path.join(MODEL_DIR, 'biasedMF.pt'))  # '%s/%s.pt' % (model_name, model_name)))
