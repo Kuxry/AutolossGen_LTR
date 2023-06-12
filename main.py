@@ -24,7 +24,7 @@ def main():
     parser.add_argument('--verbose', type=int, default=logging.INFO, help='Logging Level, 0, 10, ..., 50')
     parser.add_argument('--log_file', type=str, default='./log/log_0.txt', help='Logging file path')
     parser.add_argument('--result_file', type=str, default='../result/result.npy', help='Result file path')
-    parser.add_argument('--random_seed', type=int, default=42, help='Random seed of numpy and pytorch')
+    parser.add_argument('--random_seed', type=int, default=None, help='Random seed of numpy and pytorch')
     parser.add_argument('--model_name', type=str, default='BiasedMF', help='Choose model to run.')
     # parser.add_argument('--model_path', type=str, help='Model save path.',
     #                     default=os.path.join(MODEL_DIR, 'biasedMF.pt'))  # '%s/%s.pt' % (model_name, model_name)))
@@ -54,7 +54,10 @@ def main():
     args, extras = parser.parse_known_args()
 
     #random seed & gpu
+    if args.random_seed == None:
+        args.random_seed = np.random.randint(1<<32)
     torch.manual_seed(args.random_seed)
+    print("random seed:",args.random_seed)
     torch.cuda.manual_seed(args.random_seed)
     np.random.seed(args.random_seed)
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
@@ -63,6 +66,63 @@ def main():
     data_id = 'MQ2008_Super'
     dir_data = './data/MQ2008/'
     model_id = 'RankMSE'  # RankMSE, RankNet, LambdaRank
+    # all_result = []
+    # avg_scores=np.zeros(3)
+    # for fold in range(1, 6):
+    #     controller = Controller(search_for=args.search_for,
+    #                             search_whole_channels=True,
+    #                             num_layers=args.child_num_layers + 3,
+    #                             num_branches=args.child_num_branches,
+    #                             out_filters=args.child_out_filters,
+    #                             lstm_size=args.controller_lstm_size,
+    #                             lstm_num_layers=args.controller_lstm_num_layers,
+    #                             tanh_constant=args.controller_tanh_constant,
+    #                             temperature=None,
+    #                             skip_target=args.controller_skip_target,
+    #                             skip_weight=args.controller_skip_weight,
+    #                             entropy_weight=args.controller_entropy_weight,
+    #                             bl_dec=args.controller_bl_dec,
+    #                             num_aggregate=args.controller_num_aggregate,
+    #                             model_path=args.controller_model_path,
+    #                             sample_branch_id=args.sample_branch_id,
+    #                             sample_skip_id=args.sample_skip_id)
+    #     controller = controller.cuda()
+    #
+    #     loss_formula = LossFormula(num_layers=args.child_num_layers + 3,
+    #                                num_branches=args.child_num_branches,
+    #                                out_filters=args.child_out_filters,
+    #                                keep_prob=args.child_keep_prob,
+    #                                model_path=args.shared_cnn_model_path,
+    #                                epsilon=args.epsilon)
+    #     loss_formula = loss_formula.cuda()
+    #
+    #     # https://github.com/melodyguan/enas/blob/master/src/utils.py#L218
+    #     controller_optimizer = torch.optim.Adam(params=controller.parameters(),
+    #                                             lr=args.controller_lr,
+    #                                             betas=(0.0, 0.999),
+    #                                             eps=1e-3)
+    #     # logging
+    #     for handler in logging.root.handlers[:]:
+    #         logging.root.removeHandler(handler)
+    #     logging.basicConfig(filename=args.log_file, level=args.verbose)
+    #     logging.info(vars(args))
+    #
+    #     runner = BaseRunner.baserunner(optimizer=args.optimizer, learning_rate=args.lr, epoch=args.epoch, batch_size=args.batch_size,
+	# 					eval_batch_size=args.eval_batch_size, dropout=args.dropout, l2=args.l2, metrics=args.metric,
+	# 					check_epoch=args.check_epoch, early_stop=args.early_stop,
+	# 					loss_formula=loss_formula,controller=controller, controller_optimizer=controller_optimizer, args=args)
+    # # runner.train(search_loss=True, data_id=data_id, dir_data=dir_data, model_id=model_id)
+    #     tmp_result = runner.fold_train(search_loss=True, data_id=data_id, dir_data=dir_data, model_id=model_id, fold=fold)
+    #     avg_scores= np.add(avg_scores,tmp_result)
+    #
+    #     #all_result.append(tmp_result)
+    # avg_scores = np.divide(avg_scores, 5)
+    # logging.info(avg_scores)
+    # print(avg_scores)
+
+
+
+
 
     controller = Controller(search_for=args.search_for,
                             search_whole_channels=True,
@@ -103,10 +163,11 @@ def main():
     logging.info(vars(args))
 
     runner = BaseRunner.baserunner(optimizer=args.optimizer, learning_rate=args.lr, epoch=args.epoch, batch_size=args.batch_size,
-						eval_batch_size=args.eval_batch_size, dropout=args.dropout, l2=args.l2, metrics=args.metric,
-						check_epoch=args.check_epoch, early_stop=args.early_stop,
-						loss_formula=loss_formula,controller=controller, controller_optimizer=controller_optimizer, args=args)
+                    eval_batch_size=args.eval_batch_size, dropout=args.dropout, l2=args.l2, metrics=args.metric,
+                    check_epoch=args.check_epoch, early_stop=args.early_stop,
+                    loss_formula=loss_formula,controller=controller, controller_optimizer=controller_optimizer, args=args)
     runner.train(search_loss=True, data_id=data_id, dir_data=dir_data, model_id=model_id)
+
 
 if __name__ == '__main__':
 	main()

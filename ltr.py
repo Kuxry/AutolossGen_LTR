@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 import datetime
 import numpy as np
-
+from torch.utils.data import TensorDataset, ConcatDataset, DataLoader
 
 def torch_dcg_at_k(batch_rankings, cutoff=None, device='cpu'):
     '''
@@ -494,7 +494,8 @@ def iter_queries(in_file, presort=None, data_dict=None, scale_data=None, scaler_
         clip_query = True
 
     list_Qs = []
-    print(in_file)
+    #output files
+    #print(in_file)
     with open(in_file, encoding='iso-8859-1') as file_obj:
         dict_data = dict()
         if has_comment:
@@ -1199,20 +1200,60 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     return mean_l2r_cv_avg_scores
 
 
+def load_multiple_dataset(data_id, dir_data, fold_k, batch_size=100):
+    """
+    Load the dataset correspondingly.
+    :param eval_dict:
+    :param data_dict:
+    :param fold_k:
+    :param model_para_dict:
+    :return:
+    """
+    fold_k_dir = dir_data + 'Fold' + str(fold_k) + '/'
+    file_train, file_vali, file_test = fold_k_dir + 'train.txt', fold_k_dir + 'vali.txt', fold_k_dir + 'test.txt'
+
+    _train_data = LTRDataset(data_id=data_id, file=file_train, split_type=SPLIT_TYPE.Train, batch_size=batch_size)
+    train_letor_sampler = LETORSampler(data_source=_train_data, rough_batch_size=batch_size)
+    train_data = torch.utils.data.DataLoader(_train_data, batch_sampler=train_letor_sampler, num_workers=0)
+
+    _test_data = LTRDataset(data_id=data_id, file=file_test, split_type=SPLIT_TYPE.Test, batch_size=batch_size)
+    test_letor_sampler = LETORSampler(data_source=_test_data, rough_batch_size=batch_size)
+    test_data = torch.utils.data.DataLoader(_test_data, batch_sampler=test_letor_sampler, num_workers=0)
+
+    _vali_data = LTRDataset(data_id=data_id, file=file_vali, split_type=SPLIT_TYPE.Validation, batch_size=batch_size)
+    vali_letor_sampler = LETORSampler(data_source=_vali_data, rough_batch_size=batch_size)
+    vali_data = torch.utils.data.DataLoader(_vali_data, batch_sampler=vali_letor_sampler, num_workers=0)
+
+    return _train_data, _test_data, _vali_data
 
 
 
 def DataProcessor(data_id=None, dir_data=None):
     fold_num = 5
-    for fold_k in range(1, fold_num + 1):  # evaluation over k-fold data
+    train_data, test_data, vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=1)
+    for fold_k in range(2, fold_num + 1):  # evaluation over k-fold data
 
-        train_data, test_data, vali_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
-
+        tmp_train_data, tmp_test_data, tmp_vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+        train_data=ConcatDataset([train_data,tmp_train_data])
+        test_data=ConcatDataset([test_data,tmp_test_data])
+        vali_data=ConcatDataset([vali_data,tmp_vali_data])
+    train_data= DataLoader(train_data)
+    test_data = DataLoader(test_data)
+    vali_data = DataLoader(vali_data)
     return  train_data, test_data,vali_data
 
 
 
+def DataProcessor_epoch(data_id=None, dir_data=None,fold_k=None):
+    fold_num = 5
+    train_data, test_data, vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
 
+
+
+    train_data= DataLoader(train_data)
+    test_data = DataLoader(test_data)
+    vali_data = DataLoader(vali_data)
+    return  train_data, test_data,vali_data
 
 
 
