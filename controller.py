@@ -24,7 +24,7 @@ class Controller(nn.Module):
         parser.add_argument('--controller_entropy_weight', type=float, default=0.0001)
         parser.add_argument('--controller_bl_dec', type=float, default=0.99)
         parser.add_argument('--controller_num_aggregate', type=int, default=20)
-        parser.add_argument('--controller_train_steps', type=int, default=50)
+        parser.add_argument('--controller_train_steps', type=int, default=50)#50
         parser.add_argument('--controller_l2', type=float, default=1e-4, help='Weight of l2_regularize for controller.')
         return parser
 

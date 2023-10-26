@@ -66,8 +66,8 @@ if __name__ == '__main__':
 	random.seed(0)
 	X = [random.random() for _ in range(total_test)]
 	X = np.clip(X, float(eps), 1 - float(eps))
-	fin = open('../../log/log_0.csv', 'r')
-	fout = open('../../log/check_log_0.csv', 'w')
+	fin = open('../log/log_0.csv', 'r')
+	fout = open('../log/check_log_0.csv', 'w')
 	line = fin.readline()
 	fout.write(','.join(line.split(',')[:-1] + ['valid_check'] + line.split(',')[-1:]))
 	for i, line in enumerate(fin):

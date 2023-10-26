@@ -1,8 +1,8 @@
 import numpy as np
-filename = '../../log/log_0.txt'
+filename = '../log/log_0.txt'
 epochs, trains, valids, tests = [], [], [], []
 fin = open(filename, 'r')
-fout = open('../../log/log_0.csv', 'w')
+fout = open('../log/log_0.csv', 'w')
 interval = 1
 logs = fin.readlines()
 fout.write('Epoch, train, validation, test, formula\n')

@@ -457,7 +457,7 @@ def get_scaler_setting(data_id, scaler_id=None):
     if scaler_id is None:
         if data_id in MSLRWEB or data_id in ISTELLA_LTR:
             scale_data = True
-            scaler_id = 'SLog1P'  # ['MinMaxScaler', 'StandardScaler']
+            scaler_id = 'StandardScaler'  # ['MinMaxScaler', 'StandardScaler']
             scaler_level = 'QUERY'  # SCALER_LEVEL = ['QUERY', 'DATASET']
         else:
             scale_data = False
@@ -797,15 +797,25 @@ class NeuralRanker(nn.Module):
     def init(self):
         # inner scoring function by using a hard-coded one as an example
         self.sf = nn.Sequential(
-            nn.Linear(46, 128), nn.GELU(),
-            nn.Linear(128, 64), nn.GELU(),
-            nn.Linear(64, 32),  nn.GELU(),
-            nn.Linear(32, 1),  nn.GELU())
+            nn.Linear(136, 128), nn.GELU(),#136#46
+            nn.Linear(128, 256), nn.GELU(),
+            nn.Linear(256, 512), nn.GELU(),
+            nn.Linear(512, 1), nn.GELU())
+
+            # nn.Linear(128, 64), nn.GELU(),
+            # nn.Linear(64, 32),  nn.GELU(),
+            # nn.Linear(32, 1),  nn.GELU())
         if self.device !="cpu":
             self.sf=self.sf.cuda()
         self.optimizer = optim.Adam(self.sf.parameters(), lr = 0.0001, weight_decay = 0.0001)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+#add
+    def l2(self):
+        l2 = 0
+        for p in self.parameters():
+            l2 += (p ** 2).sum()
+        return l2
     def save_model(self, model_path=None):
         """
         save model
@@ -953,13 +963,19 @@ class NeuralRanker(nn.Module):
 
         num_queries = 0
         sum_ndcg_at_ks = torch.zeros(len(ks))
+        #gpu
+        #sum_ndcg_at_ks = sum_ndcg_at_ks.to(self.device)
         for batch_ids, batch_q_doc_vectors, batch_std_labels in test_data:  # batch_size, [batch_size, num_docs, num_features], [batch_size, num_docs]
-            if self.gpu: batch_q_doc_vectors = batch_q_doc_vectors.to(self.device)
+            if self.gpu:
+                batch_q_doc_vectors = batch_q_doc_vectors.to(self.device)
+                #batch_std_labels =batch_std_labels.to(self.device)
             batch_preds = self.predict(batch_q_doc_vectors)
+            #cpu
             if self.gpu: batch_preds = batch_preds.cpu()
 
-            _, batch_pred_desc_inds = torch.sort(batch_preds, dim=1, descending=True)
-            batch_predict_rankings = torch.gather(batch_std_labels, dim=1, index=batch_pred_desc_inds)
+            _, batch_pred_desc_inds = torch.sort(batch_preds, dim=1, descending=True)#按行排序
+
+            batch_predict_rankings = torch.gather(batch_std_labels, dim=1, index=batch_pred_desc_inds)#按索引取排序后。在标准值中取排序后的预测值
             if presort:
                 batch_ideal_rankings = batch_std_labels
             else:
@@ -968,6 +984,8 @@ class NeuralRanker(nn.Module):
             batch_ndcg_at_ks = torch_ndcg_at_ks(batch_predict_rankings=batch_predict_rankings,
                                                 batch_ideal_rankings=batch_ideal_rankings,
                                                 ks=ks, device=device)
+            #gpu
+            #batch_ndcg_at_ks=batch_ndcg_at_ks.to(self.device)
             sum_ndcg_at_ks = torch.add(sum_ndcg_at_ks, torch.sum(batch_ndcg_at_ks, dim=0))
             num_queries += len(batch_ids)
 
@@ -1200,6 +1218,47 @@ def evaluation(data_id=None, dir_data=None, model_id=None, batch_size=100):
     return mean_l2r_cv_avg_scores
 
 
+
+def evaluation_ltr(data_id=None, dir_data=None, model_id=None, batch_size=100,fold=None):
+    """
+    Evaluation learning-to-rank methods via k-fold cross validation if there are k folds, otherwise one fold.
+    :param data_dict:       settings w.r.t. data
+    :param eval_dict:       settings w.r.t. evaluation
+    :param sf_para_dict:    settings w.r.t. scoring function
+    :param model_para_dict: settings w.r.t. the ltr_adhoc model
+    :return:
+    """
+    fold_k=fold
+    cutoffs = [1,3,5,7,9,10]
+    epochs = 100
+    ranker = globals()[model_id]()
+
+
+    # time_begin = datetime.datetime.now()       # timing
+    #l2r_cv_avg_scores = np.zeros(len(cutoffs)) # fold average
+
+
+    #ranker.init()           # initialize or reset with the same random initialization
+
+    train_data, test_data,vali_data = load_multiple_data(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+    #test_data = None
+
+    for epoch_k in range(1, epochs + 1):
+        torch_fold_k_epoch_k_loss = ranker.train(train_data=train_data, epoch_k=epoch_k, presort=True)
+
+    torch_fold_ndcg_ks = ranker.ndcg_at_ks(test_data=test_data, ks=cutoffs, device='cpu', presort=True)
+    fold_ndcg_ks = torch_fold_ndcg_ks.data.numpy()
+
+    performance_list = [model_id + ' Fold-' + str(fold_k)]      # fold-wise performance
+    for i, co in enumerate(cutoffs):
+        performance_list.append('nDCG@{}:{:.4f}'.format(co, fold_ndcg_ks[i]))
+    performance_str = '\t'.join(performance_list)
+    print('\t', performance_str)
+    return ranker
+
+
+
+
 def load_multiple_dataset(data_id, dir_data, fold_k, batch_size=100):
     """
     Load the dataset correspondingly.
@@ -1224,36 +1283,39 @@ def load_multiple_dataset(data_id, dir_data, fold_k, batch_size=100):
     vali_letor_sampler = LETORSampler(data_source=_vali_data, rough_batch_size=batch_size)
     vali_data = torch.utils.data.DataLoader(_vali_data, batch_sampler=vali_letor_sampler, num_workers=0)
 
-    return _train_data, _test_data, _vali_data
+    return train_data, test_data, vali_data
 
-
-
-def DataProcessor(data_id=None, dir_data=None):
-    fold_num = 5
-    train_data, test_data, vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=1)
-    for fold_k in range(2, fold_num + 1):  # evaluation over k-fold data
-
-        tmp_train_data, tmp_test_data, tmp_vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
-        train_data=ConcatDataset([train_data,tmp_train_data])
-        test_data=ConcatDataset([test_data,tmp_test_data])
-        vali_data=ConcatDataset([vali_data,tmp_vali_data])
-    train_data= DataLoader(train_data)
-    test_data = DataLoader(test_data)
-    vali_data = DataLoader(vali_data)
-    return  train_data, test_data,vali_data
+#
+#
+# def DataProcessor(data_id=None, dir_data=None):
+#     fold_num = 5
+#     train_data, test_data, vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=1)
+#     for fold_k in range(2, fold_num + 1):  # evaluation over k-fold data
+#
+#         tmp_train_data, tmp_test_data, tmp_vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
+#         train_data=ConcatDataset([train_data,tmp_train_data])
+#         test_data=ConcatDataset([test_data,tmp_test_data])
+#         vali_data=ConcatDataset([vali_data,tmp_vali_data])
+#     train_data= DataLoader(train_data)
+#     test_data = DataLoader(test_data)
+#     vali_data = DataLoader(vali_data)
+#     return  train_data, test_data,vali_data
 
 
 
 def DataProcessor_epoch(data_id=None, dir_data=None,fold_k=None):
-    fold_num = 5
+
     train_data, test_data, vali_data = load_multiple_dataset(data_id=data_id, dir_data=dir_data, fold_k=fold_k)
 
-
-
-    train_data= DataLoader(train_data)
-    test_data = DataLoader(test_data)
-    vali_data = DataLoader(vali_data)
     return  train_data, test_data,vali_data
 
 
-
+#
+#
+# if __name__ == '__main__':
+#     # testing
+#     data_id = 'MQ2008_Super'
+#     dir_data = 'D:/Data/MQ2008/'
+#     model_id = 'RankNet'  # RankMSE, RankNet, LambdaRank
+#     # print(model_id)
+#     evaluation(data_id=data_id, dir_data=dir_data, model_id=model_id, batch_size=100)
