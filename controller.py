@@ -37,7 +37,7 @@ class Controller(nn.Module):
                  search_for="macro",
                  search_whole_channels=True,
                  num_layers=12,
-                 num_branches=6,
+                 num_branches=6,#操作符号种类
                  out_filters=36,
                  lstm_size=32,
                  lstm_num_layers=2,

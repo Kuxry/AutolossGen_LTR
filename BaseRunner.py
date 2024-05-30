@@ -132,20 +132,36 @@ class baserunner():
             #if self.args.search_loss else tqdm(batches, leave=False, desc='Epoch %5d' % (epoch + 1), ncols=100, mininterval=1)
             model.optimizer.zero_grad()
             batch_preds = model(batch_q_doc_vectors)
+
             #loss=torch.tensor(0.5)
             label=batch_std_labels
             pred=batch_preds
             smooth_coef=1e-6
 
-
             #loss = torch.mean(1 / (((label+smooth_coef + 1) + ((pred+smooth_coef) * (label+smooth_coef))))) 0.47
             #loss =torch.mean((label-pred)**2) 0.53
             loss =torch.mean((torch.log((pred+ 1 / (label+smooth_coef))))**2) #0.51
-
             loss=loss+ model.l2() * self.l2_weight
 
+            #----- ranknet
+            sigma=1.0
+            batch_s_ij = torch.unsqueeze(batch_preds, dim=2) - torch.unsqueeze(batch_preds,
+                                                                               dim=1)  # computing pairwise differences w.r.t. predictions, i.e., s_i - s_j
+            # batch_p_ij = 1.0 / (torch.exp(-self.sigma * batch_s_ij) + 1.0)
+            batch_p_ij = torch.sigmoid(sigma * batch_s_ij)
+            input=torch.triu(batch_p_ij, diagonal=1)
+
+            #-----lambda
+            batch_std_diffs = torch.unsqueeze(batch_std_labels, dim=2) - torch.unsqueeze(batch_std_labels,
+                                                                                         dim=1)  # computing pairwise differences w.r.t. standard labels, i.e., S_{ij}
+            batch_Sij = torch.clamp(batch_std_diffs, min=-1.0, max=1.0)  # ensuring S_{ij} \in {-1, 0, 1}
+            batch_std_p_ij = 0.5 * (1.0 + batch_Sij)
+            target=torch.triu(batch_std_p_ij, diagonal=1)
+            #-----
+
             if loss_fun is not None and sample_arc is not None:
-                loss = loss_fun(batch_preds, batch_std_labels, sample_arc)
+                # loss = loss_fun(batch_preds, batch_std_labels, sample_arc)
+                loss = loss_fun(input, target, sample_arc)
                 if regularizer:
                     loss += model.l2() * self.l2_weight
             # avg_loss+=loss
@@ -220,7 +236,7 @@ class baserunner():
                                 test_pred.grad.data.zero_()
                             test_loss = self.loss_formula(test_pred, test_label, sample_arc, small_epsilon=True)
                             try:
-                                test_loss.backward()
+                                test_loss.backward()#有梯度了
                             except RuntimeError:
                                 pass
                             if test_pred.grad is None or torch.norm(test_pred.grad,float('inf')) < self.args.lower_bound_zero_gradient:

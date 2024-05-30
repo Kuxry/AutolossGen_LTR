@@ -797,7 +797,7 @@ class NeuralRanker(nn.Module):
     def init(self):
         # inner scoring function by using a hard-coded one as an example
         self.sf = nn.Sequential(
-            nn.Linear(136, 128), nn.GELU(),#136#46
+            nn.Linear(46, 128), nn.GELU(),#136#46
             nn.Linear(128, 256), nn.GELU(),
             nn.Linear(256, 512), nn.GELU(),
             nn.Linear(512, 1), nn.GELU())
@@ -807,7 +807,7 @@ class NeuralRanker(nn.Module):
             # nn.Linear(32, 1),  nn.GELU())
         if self.device !="cpu":
             self.sf=self.sf.cuda()
-        self.optimizer = optim.Adam(self.sf.parameters(), lr = 0.0001, weight_decay = 0.0001)
+        self.optimizer = optim.Adam(self.sf.parameters(), lr = 0.001, weight_decay = 0.001)#0.0001
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 #add
@@ -1052,7 +1052,13 @@ class RankNet(NeuralRanker):
         batch_Sij = torch.clamp(batch_std_diffs, min=-1.0, max=1.0)  # ensuring S_{ij} \in {-1, 0, 1}
         batch_std_p_ij = 0.5 * (1.0 + batch_Sij)
 
-        _batch_loss = F.binary_cross_entropy(input=torch.triu(batch_p_ij, diagonal=1), target=torch.triu(batch_std_p_ij, diagonal=1), reduction='none')
+
+        smooth_coef = 1e-6
+        pred = torch.triu(batch_p_ij, diagonal=1)
+        label = torch.triu(batch_std_p_ij, diagonal=1)
+
+        _batch_loss =torch.log(torch.max(label, 1 / pred) + (pred * 1))
+        #_batch_loss = F.binary_cross_entropy(input=torch.triu(batch_p_ij, diagonal=1), target=torch.triu(batch_std_p_ij, diagonal=1), reduction='none')
         batch_loss = torch.sum(torch.sum(_batch_loss, dim=(2, 1)))
 
         self.optimizer.zero_grad()

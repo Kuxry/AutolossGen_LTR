@@ -1,277 +1,862 @@
+
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_2.txt', 'result_file': '../result/result.npy', 'random_seed': 42, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': '..autoloss/model/Formula_0.txt', 'child_num_layers': 10, 'child_num_branches': 10, 'child_out_filters': 36, 'sample_branch_id': True, 'sample_skip_id': True, 'search_loss': True, 'train_with_optim': True, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 10000, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 10, 'controller_train_steps': 10, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
 INFO:root:1
-INFO:root:2023-08-29 17:51:43.444207
-INFO:root:Init: 	 train= 0.176008 validation= 0.213889 test= 0.206349 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.492; Starting auc: 0.214
-INFO:root:1 / (((pred * label) + max(label , 1)))
-INFO:root:Epoch     1 [21.3 s]	 train= 0.457227 validation= 0.500000 test= 0.447619 [0.1 s] auc
+INFO:root:2023-11-30 23:08:46.428942
+INFO:root:Init: 	 train= 0.364798 validation= 0.450000 test= 0.431746 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.450; Starting auc: 0.450
+INFO:root:max(max(label , - (pred)) , Sigmoid ((pred) ^ 2))
+INFO:root:Epoch     1 [22.3 s]	 train= 0.434612 validation= 0.372222 test= 0.396825 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.372
+INFO:root:(1 / (pred)) ^ 2
+INFO:root:Epoch     2 [21.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid ((pred + (label + 1)))
+INFO:root:Epoch     3 [25.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(((max(pred , label)) ^ 2 * 1 / (label))) ^ 2
+INFO:root:Epoch     4 [25.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) * (pred + min(pred , label)))
+INFO:root:Epoch     5 [28.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / ((1 + (pred * min(pred , 1))))
+INFO:root:Epoch     6 [25.2 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(label * min(pred , min(label , 1)))
+INFO:root:Epoch     7 [27.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:min(pred , (label + Log (label)))
+INFO:root:Epoch     8 [23.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / ((label * (1 / (pred) * max(max(pred , label) , 1 / (pred)))))
+INFO:root:Epoch     9 [32.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(max(pred , label)) ^ 2
+INFO:root:Epoch    10 [30.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:{'gpu': '0', 'verbose': 20, 'log_file': './log/log_2.txt', 'result_file': '../result/result.npy', 'random_seed': 42, 'model_name': 'BiasedMF', 'controller_model_path': './model/controller.pt', 'shared_cnn_model_path': './model/loss_formula.pt', 'formula_path': '..autoloss/model/Formula_0.txt', 'child_num_layers': 10, 'child_num_branches': 10, 'child_out_filters': 36, 'sample_branch_id': True, 'sample_skip_id': True, 'search_loss': True, 'train_with_optim': True, 'child_grad_bound': 5.0, 'smooth_coef': 1e-06, 'layers': '[64, 16]', 'loss_func': 'BCE', 'load': 0, 'epoch': 10000, 'check_epoch': 1, 'early_stop': 1, 'lr': 0.01, 'batch_size': 128, 'eval_batch_size': 16384, 'dropout': 0.2, 'l2': 0.0001, 'optimizer': 'GD', 'metric': 'AUC', 'skip_eval': 0, 'skip_rate': 1.005, 'rej_rate': 1.005, 'skip_lim': 1e-05, 'rej_lim': 1e-05, 'lower_bound_zero_gradient': 0.0001, 'search_train_epoch': 1, 'step_train_epoch': 1, 'search_for': 'macro', 'controller_lstm_size': 64, 'controller_lstm_num_layers': 1, 'controller_tanh_constant': 1.5, 'controller_skip_target': 0.4, 'controller_skip_weight': 0.8, 'controller_lr': 0.001, 'controller_entropy_weight': 0.0001, 'controller_bl_dec': 0.99, 'controller_num_aggregate': 10, 'controller_train_steps': 10, 'controller_l2': 0.0001, 'child_keep_prob': 0.9, 'child_lr_max': 0.05, 'child_lr_min': 0.0005, 'child_lr_T': 10, 'child_l2_reg': 0.00025, 'epsilon': 1e-06}
+INFO:root:1
+INFO:root:2023-11-30 23:15:25.775815
+INFO:root:Init: 	 train= 0.364798 validation= 0.450000 test= 0.431746 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.497; Starting auc: 0.450
+INFO:root:max(pred , 1 / (pred))
+INFO:root:Epoch     1 [25.4 s]	 train= 0.502458 validation= 0.488889 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.503; Starting auc: 0.489
+INFO:root:1 / ((pred + 1))
+INFO:root:Epoch     2 [22.8 s]	 train= 0.512291 validation= 0.494444 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.500; Starting auc: 0.494
+INFO:root:((1 + (pred * 1)) * Log (max(1 / (pred) , (label) ^ 2)))
+INFO:root:Epoch     3 [27.6 s]	 train= 0.536873 validation= 0.500000 test= 0.514286 [0.1 s] auc
 INFO:root:Best auc during controller train: 0.508; Starting auc: 0.500
-INFO:root:max((pred + (pred * 1)) , max(1 , (1) ^ 2))
-INFO:root:Epoch     2 [27.6 s]	 train= 0.453294 validation= 0.500000 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.508; Starting auc: 0.500
-INFO:root:max((min(pred , min(pred , 1)) * ((pred) ^ 2 * min(pred , min(pred , 1)))) , (((pred) ^ 2 * min(pred , min(pred , 1)))) ^ 2)
-INFO:root:Epoch     3 [25.1 s]	 train= 0.467060 validation= 0.500000 test= 0.466667 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.506; Starting auc: 0.500
-INFO:root:(label + 1 / ((pred * label)))
-INFO:root:Epoch     4 [29.9 s]	 train= 0.453294 validation= 0.505556 test= 0.460317 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.506; Starting auc: 0.506
-INFO:root:(min(pred , 1) * 1 / (label))
-INFO:root:Epoch     5 [29.6 s]	 train= 0.456244 validation= 0.505556 test= 0.463492 [0.1 s] auc
+INFO:root:1 / (1 / (max(pred , label)))
+INFO:root:Epoch     4 [31.0 s]	 train= 0.410030 validation= 0.419444 test= 0.447619 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.514; Starting auc: 0.419
+INFO:root:(((pred + 1) * 1 / (pred))) ^ 2
+INFO:root:Epoch     5 [29.2 s]	 train= 0.523107 validation= 0.505556 test= 0.511111 [0.2 s] auc
 INFO:root:Best auc during controller train: -1.000; Starting auc: 0.506
-INFO:root:Log (1 / (min(pred , label)))
-INFO:root:Epoch     6 [54.3 s]	 train= 0.453294 validation= 0.505556 test= 0.460317 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.508; Starting auc: 0.506
-INFO:root:min(((pred) ^ 2) ^ 2 , max((pred) ^ 2 , ((pred) ^ 2) ^ 2))
-INFO:root:Epoch     7 [25.7 s]	 train= 0.461160 validation= 0.508333 test= 0.438095 [0.1 s] auc
+INFO:root:Log ((max(label , 1 / (pred)) + (pred * 1)))
+INFO:root:Epoch     6 [210.1 s]	 train= 0.537856 validation= 0.508333 test= 0.511111 [0.1 s] auc
 INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
-INFO:root:min(1 , 1 / ((pred + label)))
-INFO:root:Epoch     8 [49.4 s]	 train= 0.461160 validation= 0.508333 test= 0.438095 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
-INFO:root:1 / (min(pred , label))
-INFO:root:Epoch     9 [53.8 s]	 train= 0.450344 validation= 0.508333 test= 0.438095 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
-INFO:root:min(1 , ((pred + min(label , 1)) + (min(label , 1)) ^ 2))
-INFO:root:Epoch    10 [25.2 s]	 train= 0.458210 validation= 0.508333 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
-INFO:root:max(max(1 , 1 / ((label * (pred + 1)))) , label)
-INFO:root:Epoch    11 [34.5 s]	 train= 0.461160 validation= 0.508333 test= 0.431746 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
-INFO:root:min(pred , Log (1 / (label)))
-INFO:root:Epoch    12 [46.2 s]	 train= 0.461160 validation= 0.508333 test= 0.431746 [0.1 s] auc
+INFO:root:max(label , Sigmoid ((pred) ^ 2))
+INFO:root:Epoch     7 [43.7 s]	 train= 0.518191 validation= 0.508333 test= 0.511111 [0.1 s] auc
 INFO:root:Best auc during controller train: 0.508; Starting auc: 0.508
-INFO:root:(min(pred , (pred + 1)) + pred)
-INFO:root:Epoch    13 [24.4 s]	 train= 0.470993 validation= 0.508333 test= 0.476190 [0.1 s] auc
+INFO:root:(label * Sigmoid (pred))
+INFO:root:Epoch     8 [29.4 s]	 train= 0.520157 validation= 0.508333 test= 0.511111 [0.2 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.508
+INFO:root:1 / ((max(pred , (pred + label)) * (label) ^ 2))
+INFO:root:Epoch     9 [27.5 s]	 train= 0.523107 validation= 0.508333 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.508; Starting auc: 0.508
+INFO:root:(max(pred , label)) ^ 2
+INFO:root:Epoch    10 [23.5 s]	 train= 0.502458 validation= 0.508333 test= 0.501587 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.508; Starting auc: 0.508
+INFO:root:(max(pred , label) * 1 / (1))
+INFO:root:Epoch    11 [27.0 s]	 train= 0.497542 validation= 0.508333 test= 0.498413 [0.1 s] auc
 INFO:root:Best auc during controller train: 0.511; Starting auc: 0.508
-INFO:root:max(1 / (label) , ((label + 1 / (label)) * pred))
-INFO:root:Epoch    14 [27.3 s]	 train= 0.470010 validation= 0.511111 test= 0.482540 [0.1 s] auc
+INFO:root:(label * 1 / ((pred) ^ 2))
+INFO:root:Epoch    12 [28.6 s]	 train= 0.518191 validation= 0.511111 test= 0.517460 [0.1 s] auc
 INFO:root:Best auc during controller train: -1.000; Starting auc: 0.511
-INFO:root:((pred * (pred * label)) * pred)
-INFO:root:Epoch    15 [32.5 s]	 train= 0.474926 validation= 0.511111 test= 0.482540 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.511
-INFO:root:(max((label * 1) , (pred) ^ 2)) ^ 2
-INFO:root:Epoch    16 [31.7 s]	 train= 0.474926 validation= 0.511111 test= 0.482540 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.511; Starting auc: 0.511
-INFO:root:1 / ((label + (1 + (1 + (pred + 1)))))
-INFO:root:Epoch    17 [29.3 s]	 train= 0.472960 validation= 0.511111 test= 0.492063 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.511; Starting auc: 0.511
-INFO:root:((label * (pred) ^ 2)) ^ 2
-INFO:root:Epoch    18 [30.2 s]	 train= 0.472960 validation= 0.511111 test= 0.492063 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.511; Starting auc: 0.511
-INFO:root:((pred * (label * pred))) ^ 2
-INFO:root:Epoch    19 [29.2 s]	 train= 0.472960 validation= 0.511111 test= 0.492063 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.519; Starting auc: 0.511
-INFO:root:(min(1 , (pred * min(pred , 1)))) ^ 2
-INFO:root:Epoch    20 [30.5 s]	 train= 0.472960 validation= 0.519444 test= 0.492063 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.519
-INFO:root:(label * Log (1 / (pred)))
-INFO:root:Epoch    21 [286.0 s]	 train= 0.451327 validation= 0.519444 test= 0.444444 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.519; Starting auc: 0.519
-INFO:root:1 / (max((1 + Log ((pred + label))) , (max(pred , label)) ^ 2))
-INFO:root:Epoch    22 [60.0 s]	 train= 0.451327 validation= 0.519444 test= 0.444444 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.519
-INFO:root:((1 / (label) * max(pred , (label * 1))) + 1 / ((label * 1)))
-INFO:root:Epoch    23 [87.2 s]	 train= 0.451327 validation= 0.519444 test= 0.444444 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.519
-INFO:root:(1 / ((label * max(pred , label))) + (min(1 / ((label * max(pred , label))) , 1 / ((label * max(pred , label))))) ^ 2)
-INFO:root:Epoch    24 [29.2 s]	 train= 0.451327 validation= 0.519444 test= 0.444444 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.519
-INFO:root:1 / (1 / (((pred + 1) + (pred + 1))))
-INFO:root:Epoch    25 [33.2 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:1 / (((label + 1) + (pred * label)))
-INFO:root:Epoch    26 [100.8 s]	 train= 0.485742 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    27 [24.3 s]	 train= 0.483776 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:min((1 / (pred)) ^ 2 , max(1 / (label) , max(label , - (1 / (pred)))))
-INFO:root:Epoch    28 [23.1 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((1 * (pred) ^ 2)) ^ 2
-INFO:root:Epoch    29 [22.8 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:1 / ((pred + Log (1 / (- (1)))))
-INFO:root:Epoch    30 [35.3 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    31 [24.8 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((min(pred , 1) + (min(pred , 1) + Log (1))))
-INFO:root:Epoch    32 [31.6 s]	 train= 0.481809 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    33 [24.4 s]	 train= 0.481809 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    34 [82.8 s]	 train= 0.481809 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    35 [26.0 s]	 train= 0.481809 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    36 [33.6 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    37 [23.7 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((label + 1 / (((pred + 1) + 1 / ((pred + 1))))))
-INFO:root:Epoch    38 [31.4 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    39 [27.3 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:min(Log (1 / (pred)) , 1 / (max(label , 1)))
-INFO:root:Epoch    40 [25.2 s]	 train= 0.480826 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:(Log ((pred + 1 / (label)))) ^ 2
-INFO:root:Epoch    41 [25.8 s]	 train= 0.480826 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    42 [23.3 s]	 train= 0.477876 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    43 [24.5 s]	 train= 0.477876 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    44 [49.4 s]	 train= 0.477876 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:(((pred) ^ 2 + - ((pred) ^ 2))) ^ 2
-INFO:root:Epoch    45 [30.0 s]	 train= 0.477876 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((1 * (pred) ^ 2)) ^ 2
-INFO:root:Epoch    46 [24.9 s]	 train= 0.477876 validation= 0.533333 test= 0.495238 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred) ^ 2) ^ 2
-INFO:root:Epoch    47 [23.8 s]	 train= 0.477876 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:max(Log (label) , ((pred) ^ 2) ^ 2)
-INFO:root:Epoch    48 [30.7 s]	 train= 0.477876 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:Log (min(1 / (label) , 1 / (pred)))
-INFO:root:Epoch    49 [22.1 s]	 train= 0.477876 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log (1 / (Log (1 / (pred))))
-INFO:root:Epoch    50 [32.6 s]	 train= 0.476893 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:(1 / (pred) * 1 / (Log (1 / (label))))
-INFO:root:Epoch    51 [44.3 s]	 train= 0.482792 validation= 0.533333 test= 0.488889 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:((pred * (pred) ^ 2) + (label + (pred * (pred) ^ 2)))
-INFO:root:Epoch    52 [235.7 s]	 train= 0.479843 validation= 0.533333 test= 0.479365 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:max(Log (1 / (pred)) , 1 / (Log (1 / (pred))))
-INFO:root:Epoch    53 [1469.4 s]	 train= 0.429695 validation= 0.541667 test= 0.450794 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:1 / ((label * (pred + 1)))
-INFO:root:Epoch    54 [253.2 s]	 train= 0.431662 validation= 0.541667 test= 0.460317 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:max(1 , (pred + (pred + - (Log (1)))))
-INFO:root:Epoch    55 [161.3 s]	 train= 0.431662 validation= 0.541667 test= 0.450794 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:Log ((pred + (pred + Log ((pred * 1)))))
-INFO:root:Epoch    56 [143.1 s]	 train= 0.434612 validation= 0.541667 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:Log (max((pred + (pred * 1)) , Log (label)))
-INFO:root:Epoch    57 [144.8 s]	 train= 0.434612 validation= 0.541667 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:(label * (((pred) ^ 2) ^ 2) ^ 2)
-INFO:root:Epoch    58 [1304.7 s]	 train= 0.432645 validation= 0.541667 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:max(1 , Log ((label + (Log (pred) + (pred + label)))))
-INFO:root:Epoch    59 [514.8 s]	 train= 0.434612 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.542; Starting auc: 0.542
-INFO:root:Log ((pred + max(pred , Log (1))))
-INFO:root:Epoch    60 [42.9 s]	 train= 0.434612 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.542; Starting auc: 0.542
-INFO:root:max(Log (Log (label)) , (label * max(pred , label)))
-INFO:root:Epoch    61 [23.2 s]	 train= 0.432645 validation= 0.541667 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:max((1 + Log ((1 + 1 / (1)))) , Log (1 / (pred)))
-INFO:root:Epoch    62 [26.5 s]	 train= 0.434612 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:(((pred) ^ 2) ^ 2 * Log ((1 + ((pred) ^ 2) ^ 2)))
-INFO:root:Epoch    63 [3013.5 s]	 train= 0.434612 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.542; Starting auc: 0.542
-INFO:root:max(max(1 , Log (1)) , Log ((pred + 1 / (label))))
-INFO:root:Epoch    64 [765.3 s]	 train= 0.434612 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:(((pred) ^ 2) ^ 2) ^ 2
-INFO:root:Epoch    65 [2456.2 s]	 train= 0.437561 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.542; Starting auc: 0.542
-INFO:root:(((pred) ^ 2) ^ 2) ^ 2
-INFO:root:Epoch    66 [804.5 s]	 train= 0.440511 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:(label + (((pred) ^ 2) ^ 2) ^ 2)
-INFO:root:Epoch    67 [143.4 s]	 train= 0.440511 validation= 0.541667 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
-INFO:root:Log ((Log (1 / (pred)) * Log (Log (1 / (pred)))))
-INFO:root:Epoch    68 [25139.4 s]	 train= 0.435595 validation= 0.541667 test= 0.450794 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.542; Starting auc: 0.542
-INFO:root:(max(label , (pred + label)) * Log (max((pred) ^ 2 , (pred + (pred) ^ 2))))
-INFO:root:Epoch    69 [9649.1 s]	 train= 0.434612 validation= 0.533333 test= 0.457143 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:max(((pred * 1) + max(label , (pred * 1))) , (label + max(1 , (pred * 1))))
-INFO:root:Epoch    70 [20.4 s]	 train= 0.432645 validation= 0.533333 test= 0.457143 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:Log ((pred + Log ((pred + 1))))
-INFO:root:Epoch    71 [24.9 s]	 train= 0.432645 validation= 0.533333 test= 0.457143 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:Log ((pred + max((pred * 1) , Log ((pred * 1)))))
-INFO:root:Epoch    72 [22.8 s]	 train= 0.432645 validation= 0.533333 test= 0.450794 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:max(1 , Log ((pred + (pred + 1))))
-INFO:root:Epoch    73 [19.4 s]	 train= 0.432645 validation= 0.533333 test= 0.450794 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((pred + max(pred , Log (pred))))
-INFO:root:Epoch    74 [67.4 s]	 train= 0.432645 validation= 0.533333 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:max(pred , Log ((1 + 1)))
-INFO:root:Epoch    75 [40.2 s]	 train= 0.429695 validation= 0.533333 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((pred * (pred + label)))
-INFO:root:Epoch    76 [115.6 s]	 train= 0.436578 validation= 0.533333 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:(label + max(1 , (label + max(pred , label))))
-INFO:root:Epoch    77 [33.7 s]	 train= 0.439528 validation= 0.533333 test= 0.447619 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((pred + pred))
-INFO:root:Epoch    78 [31.8 s]	 train= 0.438545 validation= 0.533333 test= 0.441270 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:max(1 , ((pred + pred) + Log ((pred + (pred + pred)))))
-INFO:root:Epoch    79 [3819.3 s]	 train= 0.424779 validation= 0.533333 test= 0.419048 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:max((label + 1) , (max(pred , label) + max(Log (pred) , max(pred , label))))
-INFO:root:Epoch    80 [1361.6 s]	 train= 0.427729 validation= 0.525000 test= 0.431746 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.525; Starting auc: 0.525
-INFO:root:max((label + 1) , (pred + (pred + label)))
-INFO:root:Epoch    81 [20.5 s]	 train= 0.427729 validation= 0.525000 test= 0.431746 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.525; Starting auc: 0.525
-INFO:root:Log (Log ((1 + (pred + 1))))
-INFO:root:Epoch    82 [22.4 s]	 train= 0.427729 validation= 0.533333 test= 0.431746 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:max((pred + pred) , (1 + Log (pred)))
-INFO:root:Epoch    83 [56.9 s]	 train= 0.436578 validation= 0.533333 test= 0.431746 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:Log ((pred + pred))
-INFO:root:Epoch    84 [43.5 s]	 train= 0.436578 validation= 0.533333 test= 0.438095 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:(max(pred , 1) + max(label , Log ((label + (pred + (pred + label))))))
-INFO:root:Epoch    85 [3953.9 s]	 train= 0.436578 validation= 0.533333 test= 0.438095 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:Log (max(1 , (label + max(pred , label))))
-INFO:root:Epoch    86 [1380.4 s]	 train= 0.437561 validation= 0.530556 test= 0.431746 [0.1 s] auc
+INFO:root:max(label , (pred * (pred + (1) ^ 2)))
+INFO:root:Epoch    13 [52.7 s]	 train= 0.507374 validation= 0.513889 test= 0.498413 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.514; Starting auc: 0.514
+INFO:root:1 / (1 / (max(pred , label)))
+INFO:root:Epoch    14 [24.9 s]	 train= 0.503441 validation= 0.513889 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.514; Starting auc: 0.514
+INFO:root:(1 * Sigmoid (pred))
+INFO:root:Epoch    15 [25.3 s]	 train= 0.501475 validation= 0.505555 test= 0.501587 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.506; Starting auc: 0.506
+INFO:root:(Sigmoid (pred)) ^ 2
+INFO:root:Epoch    16 [22.9 s]	 train= 0.503441 validation= 0.505555 test= 0.539683 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.522; Starting auc: 0.506
+INFO:root:1 / (((min(pred , 1)) ^ 2) ^ 2)
+INFO:root:Epoch    17 [25.5 s]	 train= 0.509341 validation= 0.522222 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.522; Starting auc: 0.522
+INFO:root:1 / (min(pred , min(label , 1)))
+INFO:root:Epoch    18 [23.6 s]	 train= 0.504425 validation= 0.516667 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.517; Starting auc: 0.517
+INFO:root:(min(label , 1 / (1)) * (pred) ^ 2)
+INFO:root:Epoch    19 [20.3 s]	 train= 0.506391 validation= 0.511111 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.517; Starting auc: 0.511
+INFO:root:((min(pred , 1) * Sigmoid (pred))) ^ 2
+INFO:root:Epoch    20 [21.4 s]	 train= 0.505408 validation= 0.516667 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.525; Starting auc: 0.517
+INFO:root:max((pred + 1 / (1)) , (min(pred , max(pred , 1))) ^ 2)
+INFO:root:Epoch    21 [17.8 s]	 train= 0.502458 validation= 0.525000 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.525
+INFO:root:((label * 1 / (pred))) ^ 2
+INFO:root:Epoch    22 [23.9 s]	 train= 0.507375 validation= 0.530555 test= 0.517460 [0.1 s] auc
 INFO:root:Best auc during controller train: -1.000; Starting auc: 0.531
-INFO:root:Log ((Log ((label + (pred + label))) + (label + 1)))
-INFO:root:Epoch    87 [1145.0 s]	 train= 0.421829 validation= 0.533333 test= 0.419048 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:((label + 1) + Log ((pred * (label + 1))))
-INFO:root:Epoch    88 [384.2 s]	 train= 0.421829 validation= 0.533333 test= 0.419048 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.533; Starting auc: 0.533
-INFO:root:max(label , Log ((label + (pred + label))))
-INFO:root:Epoch    89 [19.9 s]	 train= 0.422812 validation= 0.525000 test= 0.419048 [0.1 s] auc
-INFO:root:Best auc during controller train: 0.525; Starting auc: 0.525
-INFO:root:max(Log ((label + max(pred , label))) , Log (Log ((label + max(pred , label)))))
-INFO:root:Epoch    90 [24.6 s]	 train= 0.422812 validation= 0.533333 test= 0.428571 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.533
-INFO:root:(1 / ((pred + 1)) + (max(1 , (pred + 1)) + max(label , 1 / ((pred + 1)))))
-INFO:root:Epoch    91 [41538.1 s]	 train= 0.418879 validation= 0.536111 test= 0.415873 [0.1 s] auc
-INFO:root:Best auc during controller train: -1.000; Starting auc: 0.536
+INFO:root:(max(1 , (label * 1 / (pred)))) ^ 2
+INFO:root:Epoch    23 [162.2 s]	 train= 0.511308 validation= 0.530555 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    24 [27.0 s]	 train= 0.502458 validation= 0.530555 test= 0.533333 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:(min(1 , Sigmoid (max(pred , label)))) ^ 2
+INFO:root:Epoch    25 [31.0 s]	 train= 0.507375 validation= 0.530555 test= 0.517460 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:(Log (Log (1 / (pred)))) ^ 2
+INFO:root:Epoch    26 [35.6 s]	 train= 0.507375 validation= 0.530555 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:Sigmoid ((Sigmoid (Sigmoid (pred))) ^ 2)
+INFO:root:Epoch    27 [29.0 s]	 train= 0.501475 validation= 0.530555 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:1 / ((pred + (1 * (label + 1))))
+INFO:root:Epoch    28 [29.5 s]	 train= 0.495575 validation= 0.530555 test= 0.526984 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    29 [32.4 s]	 train= 0.523107 validation= 0.530555 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:max(Sigmoid (min(pred , (pred) ^ 2)) , (- (Log (1))) ^ 2)
+INFO:root:Epoch    30 [34.6 s]	 train= 0.517207 validation= 0.530555 test= 0.539683 [0.2 s] auc
+INFO:root:Best auc during controller train: 0.531; Starting auc: 0.531
+INFO:root:Sigmoid (1 / (pred))
+INFO:root:Epoch    31 [32.1 s]	 train= 0.523107 validation= 0.530555 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.542; Starting auc: 0.531
+INFO:root:1 / ((Sigmoid (pred)) ^ 2)
+INFO:root:Epoch    32 [28.5 s]	 train= 0.527040 validation= 0.541667 test= 0.526984 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
+INFO:root:1 / ((label * Sigmoid (pred)))
+INFO:root:Epoch    33 [44.8 s]	 train= 0.525074 validation= 0.541667 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.542
+INFO:root:(1 + (Sigmoid (pred) * 1 / (Log ((pred + label)))))
+INFO:root:Epoch    34 [320.9 s]	 train= 0.512291 validation= 0.558333 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.558
+INFO:root:((1 / (pred)) ^ 2 + 1 / (1 / (pred)))
+INFO:root:Epoch    35 [106.6 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.567
+INFO:root:(1 * 1 / (max(label , max(pred , label))))
+INFO:root:Epoch    36 [68.7 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(label * Sigmoid (1 / (min(pred , 1))))
+INFO:root:Epoch    37 [32.2 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(pred * Log (1 / (pred)))
+INFO:root:Epoch    38 [33.3 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:1 / (1 / ((1 * max(pred , label))))
+INFO:root:Epoch    39 [35.1 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:min(1 , Sigmoid (1 / (pred)))
+INFO:root:Epoch    40 [31.2 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:min(1 / (pred) , (1 / (Sigmoid (pred)) + 1 / (1 / (Sigmoid (pred)))))
+INFO:root:Epoch    41 [30.3 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:min((1) ^ 2 , ((pred) ^ 2 + - (label)))
+INFO:root:Epoch    42 [31.2 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:Log (1 / ((label * (pred + 1))))
+INFO:root:Epoch    43 [34.9 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(min(pred , label) + Sigmoid (1 / (1)))
+INFO:root:Epoch    44 [27.5 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch    45 [31.9 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:Sigmoid ((pred + max(pred , (pred + 1))))
+INFO:root:Epoch    46 [31.1 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:1 / ((max(label , (pred + 1))) ^ 2)
+INFO:root:Epoch    47 [33.1 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    48 [32.8 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    49 [30.3 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(1 * min(pred , label))
+INFO:root:Epoch    50 [32.0 s]	 train= 0.516224 validation= 0.558333 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.558
+INFO:root:min(pred , 1 / ((label + 1)))
+INFO:root:Epoch    51 [31.1 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.567
+INFO:root:1 / ((label * max(pred , label)))
+INFO:root:Epoch    52 [46.0 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(1 / (pred) + 1 / (1 / (pred)))
+INFO:root:Epoch    53 [34.4 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.567
+INFO:root:1 / ((max(pred , label)) ^ 2)
+INFO:root:Epoch    54 [40.4 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(pred) ^ 2
+INFO:root:Epoch    55 [32.9 s]	 train= 0.516224 validation= 0.566667 test= 0.495238 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:(1 / (pred) * Sigmoid (1 / (pred)))
+INFO:root:Epoch    56 [35.7 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.567
+INFO:root:min(1 , (pred + label))
+INFO:root:Epoch    57 [56.0 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch    58 [30.6 s]	 train= 0.516224 validation= 0.566667 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.567; Starting auc: 0.567
+INFO:root:Log (min(1 / (pred) , ((1 + 1 / (pred))) ^ 2))
+INFO:root:Epoch    59 [34.2 s]	 train= 0.516224 validation= 0.558333 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (Log (1 / (Log ((pred + label)))))
+INFO:root:Epoch    60 [36.0 s]	 train= 0.518191 validation= 0.558333 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:min(pred , (pred) ^ 2)
+INFO:root:Epoch    61 [31.9 s]	 train= 0.518191 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:(Sigmoid (pred)) ^ 2
+INFO:root:Epoch    62 [30.2 s]	 train= 0.516224 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max(pred , (pred * label))
+INFO:root:Epoch    63 [29.1 s]	 train= 0.518191 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max(Sigmoid (pred) , Sigmoid (pred))
+INFO:root:Epoch    64 [30.7 s]	 train= 0.518191 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (pred)
+INFO:root:Epoch    65 [25.7 s]	 train= 0.515241 validation= 0.558333 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max(label , 1 / (pred))
+INFO:root:Epoch    66 [30.2 s]	 train= 0.515241 validation= 0.558333 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (pred)
+INFO:root:Epoch    67 [21.2 s]	 train= 0.515241 validation= 0.558333 test= 0.533333 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    68 [24.3 s]	 train= 0.512291 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.550
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    69 [23.3 s]	 train= 0.512291 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.550
+INFO:root:min(1 / (pred) , Log (1 / (pred)))
+INFO:root:Epoch    70 [27.4 s]	 train= 0.510324 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:1 / (pred)
+INFO:root:Epoch    71 [19.7 s]	 train= 0.509341 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:min(Sigmoid ((pred) ^ 2) , 1 / (label))
+INFO:root:Epoch    72 [24.2 s]	 train= 0.508358 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    73 [22.6 s]	 train= 0.511308 validation= 0.550000 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log ((pred + label))
+INFO:root:Epoch    74 [23.6 s]	 train= 0.506391 validation= 0.550000 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:pred
+INFO:root:Epoch    75 [23.0 s]	 train= 0.502458 validation= 0.550000 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:max(pred , Log (max(pred , label)))
+INFO:root:Epoch    76 [19.7 s]	 train= 0.502458 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:1 / (max(1 / (min(pred , label)) , - (label)))
+INFO:root:Epoch    77 [20.8 s]	 train= 0.502458 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log (Log (1 / (min(pred , label))))
+INFO:root:Epoch    78 [23.1 s]	 train= 0.502458 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:max(Sigmoid (- (1)) , 1 / ((pred + - (1))))
+INFO:root:Epoch    79 [22.0 s]	 train= 0.502458 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:min(1 / (label) , (pred + 1))
+INFO:root:Epoch    80 [21.3 s]	 train= 0.506391 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    81 [24.6 s]	 train= 0.506391 validation= 0.550000 test= 0.511111 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.550
+INFO:root:Log (1 / (max(pred , label)))
+INFO:root:Epoch    82 [49.0 s]	 train= 0.501475 validation= 0.550000 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log (Log (1 / (pred)))
+INFO:root:Epoch    83 [20.9 s]	 train= 0.502458 validation= 0.541667 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.542
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    84 [19.8 s]	 train= 0.501475 validation= 0.550000 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    85 [20.6 s]	 train= 0.501475 validation= 0.550000 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.550; Starting auc: 0.550
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    86 [19.8 s]	 train= 0.501475 validation= 0.550000 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.550
+INFO:root:1 / (max(pred , label))
+INFO:root:Epoch    87 [21.5 s]	 train= 0.504425 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch    88 [21.6 s]	 train= 0.505408 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.558
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch    89 [25.6 s]	 train= 0.505408 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (max(max(label , - (max(pred , label))) , max(max(pred , label) , - (1))))
+INFO:root:Epoch    90 [21.5 s]	 train= 0.509341 validation= 0.558333 test= 0.523809 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max((pred + label) , pred)
+INFO:root:Epoch    91 [23.1 s]	 train= 0.504425 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / ((pred + 1))
+INFO:root:Epoch    92 [24.3 s]	 train= 0.503441 validation= 0.558333 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.558
+INFO:root:1 / (1 / (1 / (max(pred , label))))
+INFO:root:Epoch    93 [31.4 s]	 train= 0.509341 validation= 0.558333 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:(- (Log (label)) + 1 / (max(pred , label)))
+INFO:root:Epoch    94 [21.8 s]	 train= 0.510324 validation= 0.558333 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:(pred) ^ 2
+INFO:root:Epoch    95 [20.9 s]	 train= 0.508358 validation= 0.558333 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:Log (max(1 , 1 / (pred)))
+INFO:root:Epoch    96 [21.3 s]	 train= 0.509341 validation= 0.558333 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    97 [18.4 s]	 train= 0.509341 validation= 0.558333 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.558
+INFO:root:((pred + 1)) ^ 2
+INFO:root:Epoch    98 [38.5 s]	 train= 0.493608 validation= 0.558333 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch    99 [23.3 s]	 train= 0.499508 validation= 0.558333 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / ((1 / (pred) * (label + 1 / (1))))
+INFO:root:Epoch   100 [18.7 s]	 train= 0.493609 validation= 0.558333 test= 0.498413 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max(1 / (max(pred , label)) , max(label , 1 / (max(pred , label))))
+INFO:root:Epoch   101 [23.8 s]	 train= 0.499508 validation= 0.558333 test= 0.530159 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:max(label , (pred) ^ 2)
+INFO:root:Epoch   102 [22.8 s]	 train= 0.493608 validation= 0.558333 test= 0.523810 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   103 [20.4 s]	 train= 0.493608 validation= 0.558333 test= 0.523810 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (max(- ((pred + 1)) , max((pred + 1) , - ((pred + 1)))))
+INFO:root:Epoch   104 [23.1 s]	 train= 0.496558 validation= 0.558333 test= 0.523810 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   105 [19.3 s]	 train= 0.499508 validation= 0.558333 test= 0.523810 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.558; Starting auc: 0.558
+INFO:root:1 / (max(pred , max(pred , label)))
+INFO:root:Epoch   106 [19.6 s]	 train= 0.510324 validation= 0.558333 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.564; Starting auc: 0.558
+INFO:root:1 / (1 / ((pred + max(pred , 1))))
+INFO:root:Epoch   107 [19.9 s]	 train= 0.505408 validation= 0.563889 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.564; Starting auc: 0.564
+INFO:root:Log ((pred + 1 / (1)))
+INFO:root:Epoch   108 [20.9 s]	 train= 0.499508 validation= 0.563889 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.564
+INFO:root:1 / (Sigmoid (pred))
+INFO:root:Epoch   109 [22.7 s]	 train= 0.499508 validation= 0.563889 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.564; Starting auc: 0.564
+INFO:root:1 / (max(1 / (1) , (pred + 1 / (label))))
+INFO:root:Epoch   110 [22.2 s]	 train= 0.502458 validation= 0.563889 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.564
+INFO:root:1 / (max(pred , Sigmoid (pred)))
+INFO:root:Epoch   111 [20.4 s]	 train= 0.509341 validation= 0.563889 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.572; Starting auc: 0.564
+INFO:root:1 / (1 / (pred))
+INFO:root:Epoch   112 [18.8 s]	 train= 0.502458 validation= 0.572222 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.572
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch   113 [29.1 s]	 train= 0.502458 validation= 0.572222 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.572; Starting auc: 0.572
+INFO:root:Sigmoid (max(pred , Log (1)))
+INFO:root:Epoch   114 [21.9 s]	 train= 0.502458 validation= 0.572222 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.572; Starting auc: 0.572
+INFO:root:max(Sigmoid (1 / (pred)) , - (max(1 , Sigmoid (1 / (pred)))))
+INFO:root:Epoch   115 [22.3 s]	 train= 0.502458 validation= 0.572222 test= 0.520635 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.572
+INFO:root:max(label , Log (1 / (max(pred , label))))
+INFO:root:Epoch   116 [23.1 s]	 train= 0.502458 validation= 0.572222 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.572; Starting auc: 0.572
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch   117 [22.0 s]	 train= 0.499508 validation= 0.566667 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.569; Starting auc: 0.567
+INFO:root:(max(1 , 1 / (pred))) ^ 2
+INFO:root:Epoch   118 [20.4 s]	 train= 0.515241 validation= 0.561111 test= 0.476190 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.561
+INFO:root:1 / (max(pred , label))
+INFO:root:Epoch   119 [20.7 s]	 train= 0.516224 validation= 0.583333 test= 0.482540 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.583
+INFO:root:1 / (pred)
+INFO:root:Epoch   120 [19.6 s]	 train= 0.530973 validation= 0.566667 test= 0.476190 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.567
+INFO:root:max(1 / (max(pred , label)) , max(max(pred , label) , max(label , 1)))
+INFO:root:Epoch   121 [21.2 s]	 train= 0.522124 validation= 0.583333 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.583
+INFO:root:Log (max(1 , (1 + max(pred , label))))
+INFO:root:Epoch   122 [13.9 s]	 train= 0.524090 validation= 0.583333 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.583
+INFO:root:max(max(pred , max(label , 1 / (max(pred , label)))) , - (1 / (label)))
+INFO:root:Epoch   123 [10.3 s]	 train= 0.525074 validation= 0.583333 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.583
+INFO:root:max(max(pred , Log (1)) , - (1 / (1)))
+INFO:root:Epoch   124 [11.8 s]	 train= 0.520157 validation= 0.575000 test= 0.482540 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.583; Starting auc: 0.575
+INFO:root:(label * 1 / (1 / (pred)))
+INFO:root:Epoch   125 [14.3 s]	 train= 0.528023 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.589
+INFO:root:Log (1 / (max(pred , label)))
+INFO:root:Epoch   126 [14.2 s]	 train= 0.523107 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:max(pred , (Log (label)) ^ 2)
+INFO:root:Epoch   127 [11.8 s]	 train= 0.529990 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:Sigmoid (1 / (1 / (1 / (pred))))
+INFO:root:Epoch   128 [11.1 s]	 train= 0.529990 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:max(Log (1) , (max(pred , label) + 1 / (max(pred , label))))
+INFO:root:Epoch   129 [11.1 s]	 train= 0.522124 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:max(pred , max(label , - (1)))
+INFO:root:Epoch   130 [12.7 s]	 train= 0.529990 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:Log ((pred + 1))
+INFO:root:Epoch   131 [14.3 s]	 train= 0.523107 validation= 0.588889 test= 0.485714 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.589
+INFO:root:1 / ((max(pred , label) + max(pred , max(pred , label))))
+INFO:root:Epoch   132 [50.2 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Log (Log (1 / (max(pred , label))))
+INFO:root:Epoch   133 [45.2 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Sigmoid (1 / (pred))
+INFO:root:Epoch   134 [77.7 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Sigmoid (1 / (pred))
+INFO:root:Epoch   135 [43.7 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:max(Sigmoid (pred) , 1 / (Sigmoid (pred)))
+INFO:root:Epoch   136 [24.2 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Sigmoid (1 / (pred))
+INFO:root:Epoch   137 [57.2 s]	 train= 0.522124 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:1 / ((pred + 1 / (1)))
+INFO:root:Epoch   138 [36.3 s]	 train= 0.525074 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Sigmoid (1 / (pred))
+INFO:root:Epoch   139 [73.1 s]	 train= 0.525074 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.597
+INFO:root:Log ((pred + 1))
+INFO:root:Epoch   140 [30.5 s]	 train= 0.525074 validation= 0.597222 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.597; Starting auc: 0.597
+INFO:root:max(Sigmoid (pred) , - (pred))
+INFO:root:Epoch   141 [23.0 s]	 train= 0.525074 validation= 0.588889 test= 0.492063 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.589; Starting auc: 0.589
+INFO:root:1 / (1 / (max(pred , label)))
+INFO:root:Epoch   142 [20.9 s]	 train= 0.527040 validation= 0.588889 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.600; Starting auc: 0.589
+INFO:root:(max(1 , 1 / (pred))) ^ 2
+INFO:root:Epoch   143 [20.4 s]	 train= 0.523107 validation= 0.600000 test= 0.498413 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.600
+INFO:root:1 / (max(1 / (pred) , (label + 1 / (pred))))
+INFO:root:Epoch   144 [103.4 s]	 train= 0.514257 validation= 0.605556 test= 0.507936 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.611; Starting auc: 0.606
+INFO:root:1 / (max(max(pred , label) , Sigmoid (1)))
+INFO:root:Epoch   145 [29.9 s]	 train= 0.521140 validation= 0.611111 test= 0.517460 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.611
+INFO:root:max(label , Log (max(label , 1 / (pred))))
+INFO:root:Epoch   146 [31.1 s]	 train= 0.520157 validation= 0.611111 test= 0.488889 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.611; Starting auc: 0.611
+INFO:root:1 / (max(1 / (label) , 1 / (pred)))
+INFO:root:Epoch   147 [24.3 s]	 train= 0.515241 validation= 0.611111 test= 0.498413 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.611
+INFO:root:(max(pred , Log (1 / (pred))) * min(pred , max(1 , max(pred , Log (1 / (pred))))))
+INFO:root:Epoch   148 [2379.1 s]	 train= 0.517207 validation= 0.619445 test= 0.504762 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.619; Starting auc: 0.619
+INFO:root:max(label , Log (1 / (pred)))
+INFO:root:Epoch   149 [840.6 s]	 train= 0.475909 validation= 0.619445 test= 0.514286 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.619
+INFO:root:1 / ((pred * Log (Log (1 / (pred)))))
+INFO:root:Epoch   150 [20485.5 s]	 train= 0.621435 validation= 0.686111 test= 0.739683 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.686
+INFO:root:1 / (pred)
+INFO:root:Epoch   151 [7767.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   152 [21.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(max(1 , min(pred , label)) * 1 / ((pred * (label * max(1 , min(pred , label))))))
+INFO:root:Epoch   153 [19.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   154 [23.2 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   155 [27.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred) ^ 2
+INFO:root:Epoch   156 [22.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (1 / (1 / (pred)))
+INFO:root:Epoch   157 [19.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log ((1 / (pred) * 1 / (label)))
+INFO:root:Epoch   158 [21.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / ((pred * 1))
+INFO:root:Epoch   159 [22.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   160 [21.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (1 / (pred))
+INFO:root:Epoch   161 [21.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * (pred * min(label , 1 / (pred))))
+INFO:root:Epoch   162 [25.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   163 [23.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * ((pred * 1) * 1 / (1 / (1))))
+INFO:root:Epoch   164 [22.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 / ((label * 1)) * max(pred , (label * 1)))
+INFO:root:Epoch   165 [22.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / ((pred * 1))
+INFO:root:Epoch   166 [22.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log ((1 * 1 / (pred)))
+INFO:root:Epoch   167 [23.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 / (1) + min(pred , 1 / (1)))
+INFO:root:Epoch   168 [23.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   169 [19.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   170 [19.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * Log (1 / (pred)))
+INFO:root:Epoch   171 [18.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (pred) ^ 2)
+INFO:root:Epoch   172 [21.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   173 [21.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (1 / ((pred * label)))
+INFO:root:Epoch   174 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (((1 * - (label)) + 1 / ((pred * 1))))
+INFO:root:Epoch   175 [21.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * (pred * 1))
+INFO:root:Epoch   176 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * (label * (pred * 1)))
+INFO:root:Epoch   177 [19.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (max(pred , label))
+INFO:root:Epoch   178 [23.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 / (label) * (pred * 1))
+INFO:root:Epoch   179 [17.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * label)
+INFO:root:Epoch   180 [22.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 / ((pred * (label) ^ 2)) * max(label , (label) ^ 2))
+INFO:root:Epoch   181 [20.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:min(pred , label)
+INFO:root:Epoch   182 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) + Log (label))
+INFO:root:Epoch   183 [18.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 * Sigmoid ((pred * label)))
+INFO:root:Epoch   184 [19.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1 / (Log (1)))
+INFO:root:Epoch   185 [19.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1)
+INFO:root:Epoch   186 [20.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(label * 1 / (pred))
+INFO:root:Epoch   187 [24.2 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:max(- (1) , 1 / (pred))
+INFO:root:Epoch   188 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1)
+INFO:root:Epoch   189 [23.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (pred)
+INFO:root:Epoch   190 [19.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1 / (1))
+INFO:root:Epoch   191 [21.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) * 1 / (1))
+INFO:root:Epoch   192 [22.2 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1)
+INFO:root:Epoch   193 [18.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (pred * 1 / (Log (1))))
+INFO:root:Epoch   194 [21.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid ((pred * label))
+INFO:root:Epoch   195 [22.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (1 / (pred))
+INFO:root:Epoch   196 [19.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:min(1 , Sigmoid (pred))
+INFO:root:Epoch   197 [19.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * (pred * (pred * 1)))) ^ 2
+INFO:root:Epoch   198 [21.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred + - (Log (- (max(label , 1)))))
+INFO:root:Epoch   199 [20.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred + label) * (label * 1))
+INFO:root:Epoch   200 [19.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(1 + (pred * label))
+INFO:root:Epoch   201 [16.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred) ^ 2) ^ 2
+INFO:root:Epoch   202 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred + Log (1))
+INFO:root:Epoch   203 [17.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred) ^ 2 * 1 / ((label * (label * 1))))
+INFO:root:Epoch   204 [17.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (label * 1))
+INFO:root:Epoch   205 [17.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) + Log (Log (- (pred))))
+INFO:root:Epoch   206 [19.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (pred * label))
+INFO:root:Epoch   207 [20.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid ((pred * (label * 1)))
+INFO:root:Epoch   208 [19.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(label * (pred + - (Log (label))))
+INFO:root:Epoch   209 [17.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(Log (1 / (label)) * (pred * 1))
+INFO:root:Epoch   210 [21.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch   211 [18.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) + Log (- (pred)))
+INFO:root:Epoch   212 [19.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (pred * label))
+INFO:root:Epoch   213 [18.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (pred * 1))
+INFO:root:Epoch   214 [22.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:pred
+INFO:root:Epoch   215 [19.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:max((pred * label) , Log (Log (pred)))
+INFO:root:Epoch   216 [24.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   217 [17.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:pred
+INFO:root:Epoch   218 [18.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch   219 [17.9 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Sigmoid (pred)
+INFO:root:Epoch   220 [18.8 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(label * (pred) ^ 2)
+INFO:root:Epoch   221 [17.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * Log (1 / (label)))
+INFO:root:Epoch   222 [21.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:max(label , (pred * (pred + (label * 1))))
+INFO:root:Epoch   223 [18.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log ((1 / ((1 * (label * (pred * 1))))) ^ 2)
+INFO:root:Epoch   224 [18.1 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) * 1 / (label))
+INFO:root:Epoch   225 [18.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1)
+INFO:root:Epoch   226 [22.4 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * 1 / (1))
+INFO:root:Epoch   227 [19.7 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * ((pred * min(label , 1 / (1)))) ^ 2)
+INFO:root:Epoch   228 [20.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:((pred * label) * max(label , (pred * label)))
+INFO:root:Epoch   229 [21.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (Log ((pred + Sigmoid (1))))
+INFO:root:Epoch   230 [22.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:1 / (1 / (pred))
+INFO:root:Epoch   231 [21.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(label + 1 / (pred))
+INFO:root:Epoch   232 [19.6 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:(pred * (1 * 1 / (1)))
+INFO:root:Epoch   233 [24.0 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:pred
+INFO:root:Epoch   234 [24.5 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.786; Starting auc: 0.786
+INFO:root:Log (Log (1 / (pred)))
+INFO:root:Epoch   235 [20.3 s]	 train= 0.692232 validation= 0.786111 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.786
+INFO:root:1 / (1 / (pred))
+INFO:root:Epoch   236 [22.1 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * 1 / (Log (1 / (pred))))
+INFO:root:Epoch   237 [21.4 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / ((pred * 1 / (1)))
+INFO:root:Epoch   238 [20.9 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (pred)
+INFO:root:Epoch   239 [23.1 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:max((pred * 1) , - (((pred * 1) * (pred * label))))
+INFO:root:Epoch   240 [24.0 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(label * 1 / (1 / ((pred * label))))
+INFO:root:Epoch   241 [20.4 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (pred)
+INFO:root:Epoch   242 [22.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (min(label , 1 / (1 / (pred))))
+INFO:root:Epoch   243 [21.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(Log ((pred + label)) * Sigmoid (- (1 / (pred))))
+INFO:root:Epoch   244 [24.8 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * 1)
+INFO:root:Epoch   245 [21.8 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:Log (Log (1 / (pred)))
+INFO:root:Epoch   246 [19.8 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / ((1 * (pred * 1)))
+INFO:root:Epoch   247 [20.4 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (pred)
+INFO:root:Epoch   248 [24.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(1 * 1 / ((pred * (1 * (label * 1)))))
+INFO:root:Epoch   249 [22.8 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:((pred * 1) * 1 / (Log (1)))
+INFO:root:Epoch   250 [23.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:Log ((label * (label * 1 / (pred))))
+INFO:root:Epoch   251 [20.8 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (max(pred , label))
+INFO:root:Epoch   252 [20.6 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * label)
+INFO:root:Epoch   253 [22.4 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(1 * 1 / ((pred * label)))
+INFO:root:Epoch   254 [25.5 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / (pred)
+INFO:root:Epoch   255 [22.7 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * (label * 1))
+INFO:root:Epoch   256 [21.4 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * 1 / ((1 * (label * 1))))
+INFO:root:Epoch   257 [23.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:Log (1 / (pred))
+INFO:root:Epoch   258 [21.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(1 * (pred * 1))
+INFO:root:Epoch   259 [21.6 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:1 / ((1 * 1 / (pred)))
+INFO:root:Epoch   260 [23.2 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.794; Starting auc: 0.794
+INFO:root:(pred * 1)
+INFO:root:Epoch   261 [23.0 s]	 train= 0.692232 validation= 0.794444 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.797; Starting auc: 0.794
+INFO:root:1 / (max(label , (label * 1 / (pred))))
+INFO:root:Epoch   262 [21.5 s]	 train= 0.695182 validation= 0.797222 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.797; Starting auc: 0.797
+INFO:root:(pred * (pred * label))
+INFO:root:Epoch   263 [22.6 s]	 train= 0.697148 validation= 0.797222 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.797; Starting auc: 0.797
+INFO:root:1 / (pred)
+INFO:root:Epoch   264 [28.0 s]	 train= 0.697148 validation= 0.797222 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.797; Starting auc: 0.797
+INFO:root:(pred * 1)
+INFO:root:Epoch   265 [21.8 s]	 train= 0.703048 validation= 0.797222 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.797; Starting auc: 0.797
+INFO:root:(1 * 1 / (1 / (pred)))
+INFO:root:Epoch   266 [17.8 s]	 train= 0.698132 validation= 0.797222 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.814; Starting auc: 0.797
+INFO:root:(pred + 1 / (pred))
+INFO:root:Epoch   267 [20.5 s]	 train= 0.701082 validation= 0.813889 test= 0.793651 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.814; Starting auc: 0.814
+INFO:root:Log (1 / ((pred * label)))
+INFO:root:Epoch   268 [19.8 s]	 train= 0.705998 validation= 0.813889 test= 0.784127 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.814; Starting auc: 0.814
+INFO:root:(1 / (label) * (label * 1 / (pred)))
+INFO:root:Epoch   269 [25.5 s]	 train= 0.716814 validation= 0.813889 test= 0.784127 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.822; Starting auc: 0.814
+INFO:root:max(pred , (pred) ^ 2)
+INFO:root:Epoch   270 [20.6 s]	 train= 0.721731 validation= 0.813889 test= 0.787302 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.822; Starting auc: 0.814
+INFO:root:1 / (Log (1 / ((pred * 1))))
+INFO:root:Epoch   271 [23.5 s]	 train= 0.734513 validation= 0.813889 test= 0.777778 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.825; Starting auc: 0.814
+INFO:root:(1 * 1 / ((pred * label)))
+INFO:root:Epoch   272 [22.8 s]	 train= 0.742380 validation= 0.825000 test= 0.787302 [0.1 s] auc
+INFO:root:Best auc during controller train: 0.839; Starting auc: 0.825
+INFO:root:(1 / (1) * (1 * 1 / (pred)))
+INFO:root:Epoch   273 [23.7 s]	 train= 0.735496 validation= 0.822222 test= 0.800000 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.822
+INFO:root:1 / (((pred * label) * (label * (pred * label))))
+INFO:root:Epoch   274 [180.1 s]	 train= 0.738446 validation= 0.836111 test= 0.790476 [0.1 s] auc
+INFO:root:Best auc during controller train: -1.000; Starting auc: 0.836
