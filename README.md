@@ -6,7 +6,7 @@
 
 3. This research is applicable to real-world problems in the fields of Information Retrieval (IR) and Learning to Rank (LTR), contributing to the development of more efficient and effective models.
 
-### Background and Key Scientific Questions of The Proposed Research
+### Background and Key Scientific Questions 
 Information Retrieval (IR) [1] is the research field that focuses on providing effective results to users from a large-scale dataset, such as web search and recommendation systems. Learning to rank (LTR) is a key technique in the field of IR. It is a class of techniques that explores how to use machine learning to solve ranking problems. According to recent studies [2,3], a traditional LTR architecture consists of two vital parts: the score function and the loss function to optimize the LTR model. 
 
 Furthermore, the current LTR models predominantly rely on manually designed loss functions, which need significant expertise and human effort. To the best of our knowledge, no automatic loss function generation for LTR systems has ever been deployed or proposed.
